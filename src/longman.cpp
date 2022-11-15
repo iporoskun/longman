@@ -167,7 +167,8 @@ floating_t longman::inclination_of_moon() const { // Im_rad
   const auto inc_moon_rad =
 	acos(cos(omega) * cos(i) - sin(omega) * sin(i) * cos(N_rad));
   if (
-	((inc_moon_rad * 180 / M_PI) < 18) || ((inc_moon_rad * 180 / M_PI) > 28)) {
+	((inc_moon_rad * 180 / std::numbers::pi) < 18)
+	|| ((inc_moon_rad * 180 / std::numbers::pi) > 28)) {
 	throw std::logic_error("Inclination of the Moon's orbit to the equator "
 						   "is outside of the normal range.");
   }
@@ -176,7 +177,9 @@ floating_t longman::inclination_of_moon() const { // Im_rad
 
 floating_t longman::longitude_celestial_equator() const { // nu
   const auto nu_t = asin(sin(i) * sin(N_rad) / sin(Im_rad));
-  if (((nu_t * 180 / M_PI) < -15) || ((nu_t * 180 / M_PI) > 15)) {
+  if (
+	((nu_t * 180 / std::numbers::pi) < -15)
+	|| ((nu_t * 180 / std::numbers::pi) > 15)) {
 	throw std::logic_error(
 	  "Longitude in the celestial equator is not correct.");
   }

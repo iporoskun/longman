@@ -1,7 +1,5 @@
 #pragma once
-#define _USE_MATH_DEFINES
 #include <cmath>
-#include <math.h>
 #include <numbers>
 
 #include "longman_parameter.hpp"
@@ -27,18 +25,18 @@ inline constexpr floating_t
   const floating_t angles_deg =
 	details::abs(deg) + details::abs(min) / 60. + details::abs(sec) / 3600.;
   if (deg < 0. || min < 0. || sec < 0.) {
-	return -angles_deg * M_PI / static_cast<floating_t>(180);
+	return -angles_deg * pi_v<floating_t> / static_cast<floating_t>(180);
   } else {
-	return angles_deg * M_PI / static_cast<floating_t>(180);
+	return angles_deg * pi_v<floating_t> / static_cast<floating_t>(180);
   }
 }
 
 inline constexpr floating_t deg2rad(floating_t deg) noexcept {
-  return deg * M_PI / static_cast<floating_t>(180);
+  return deg * pi_v<floating_t> / static_cast<floating_t>(180);
 }
 
 inline constexpr floating_t rad2deg(floating_t rad) noexcept {
-  return rad / M_PI * static_cast<floating_t>(180);
+  return rad / pi_v<floating_t> * static_cast<floating_t>(180);
 }
 
 inline auto
@@ -81,7 +79,8 @@ inline floating_t centuries_from_ref_date(
 
 inline constexpr floating_t
   dms2deg(floating_t deg, floating_t min = 0., floating_t sec = 0.) noexcept {
-  return details::dms2rad(deg, min, sec) * 180. / M_PI;
+  return details::dms2rad(deg, min, sec) * 180.
+		 / std::numbers::pi_v<floating_t>;
 }
 
 // Advances in Geophysical Methods Applied to Forensic Investigations
@@ -106,8 +105,7 @@ class longman {
   constexpr static auto love_k2 = 0.303;
   constexpr static auto beta = 1. + love_h2 - 3. / 2. * love_k2;
 
-  constexpr static auto rev = 360.;
-  constexpr static auto rev_sec = rev * 3600.;
+  constexpr static auto rev_sec = 360. * 3600.;
 
   using time_point = std::chrono::sys_time<duration_t>;
 
@@ -115,27 +113,27 @@ class longman {
   time_point utc_time_;
   duration_t utc_offset_;
 
-  floating_t sm_rad{};
-  floating_t pm_rad{};
-  floating_t hs_rad{};
-  floating_t N_rad{};
-  floating_t ps_rad{};
-  floating_t es{};
+  floating_t sm_rad;
+  floating_t pm_rad;
+  floating_t hs_rad;
+  floating_t N_rad;
+  floating_t ps_rad;
+  floating_t es;
 
   // longman_parameter::position_t pos_deg_m;
   longman_parameter::position_t pos_rad_cm;
 
   floating_t
-	r{}; // [cm] distance from observation point to the center of the Earth
-  floating_t d{}; // distance from Moon to the Earth's geocenter
-  floating_t D{}; // distance from Sun to the Earth's geocenter
-  floating_t Im_rad{}; // Inclination of the Moon's orbit to the equator
-  floating_t nu{}; // Longitude in the celestial equator of its intersection A
-				   // with the Moon's orbit
-  floating_t chi_m_rad{}; // right ascension of meridian of place of
-						  // observations reckoned from A
-  floating_t chi_s_rad{}; // right ascension of meridian of place of
-						  // observations reckoned from the vernal equinox
+	r; // [cm] distance from observation point to the center of the Earth
+  floating_t d; // distance from Moon to the Earth's geocenter
+  floating_t D; // distance from Sun to the Earth's geocenter
+  floating_t Im_rad; // Inclination of the Moon's orbit to the equator
+  floating_t nu; // Longitude in the celestial equator of its
+				 // intersection A with the Moon's orbit
+  floating_t chi_m_rad; // right ascension of meridian of place of
+						// observations reckoned from A
+  floating_t chi_s_rad; // right ascension of meridian of place of
+						// observations reckoned from the vernal equinox
 
 public:
   longman() = default;

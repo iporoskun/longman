@@ -14,8 +14,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # is enabled and all warnings are treated as errors
 # if you want to switch this behavior, change TRUE to FALSE
 set(ENABLE_DEVELOPER_MODE
-    TRUE
-    CACHE BOOL "Enable 'developer mode'")
+  TRUE
+  CACHE BOOL "Enable 'developer mode'")
 
 # Change this to false if you want to disable warnings_as_errors in developer mode
 set(OPT_WARNINGS_AS_ERRORS_DEVELOPER_DEFAULT TRUE)
@@ -34,17 +34,18 @@ include(${_project_options_SOURCE_DIR}/Index.cmake)
 # Set the project name and language
 project(
   myproject
-  VERSION 0.0.1
+  VERSION 1.0.0
   DESCRIPTION ""
-  HOMEPAGE_URL "%%myurl%%"
-  LANGUAGES CXX C)
+  HOMEPAGE_URL "https://github.com/iporoskun/longman"
+  LANGUAGES CXX)
 
 # This variable is set by project() in CMake 3.21+
 string(
   COMPARE EQUAL
-          "${CMAKE_SOURCE_DIR}"
-          "${PROJECT_SOURCE_DIR}"
-          PROJECT_IS_TOP_LEVEL)
+  "${CMAKE_SOURCE_DIR}"
+  "${PROJECT_SOURCE_DIR}"
+  PROJECT_IS_TOP_LEVEL)
+
 if(PROJECT_IS_TOP_LEVEL)
   # Consider the CTest module, which creates targets and options!
   # Only needed if you want to enable submissions to a CDash server.
@@ -52,15 +53,16 @@ if(PROJECT_IS_TOP_LEVEL)
 endif()
 
 set(GIT_SHA
-    "Unknown"
-    CACHE STRING "SHA this build was generated from")
+  "Unknown"
+  CACHE STRING "SHA this build was generated from")
 string(
   SUBSTRING "${GIT_SHA}"
-            0
-            8
-            GIT_SHORT_SHA)
+  0
+  8
+  GIT_SHORT_SHA)
 
 get_property(BUILDING_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
 if(BUILDING_MULTI_CONFIG)
   if(NOT CMAKE_BUILD_TYPE)
     # Make sure that all supported configuration types have their
@@ -69,16 +71,16 @@ if(BUILDING_MULTI_CONFIG)
     # is not forced-set on the command line for VS
     message(TRACE "Setting up multi-config build types")
     set(CMAKE_CONFIGURATION_TYPES
-        Debug
-        Release
-        RelWithDebInfo
-        MinSizeRel
-        CACHE STRING "Enabled build types" FORCE)
+      Debug
+      Release
+      RelWithDebInfo
+      MinSizeRel
+      CACHE STRING "Enabled build types" FORCE)
   else()
     message(TRACE "User chose a specific build type, so we are using that")
     set(CMAKE_CONFIGURATION_TYPES
-        ${CMAKE_BUILD_TYPE}
-        CACHE STRING "Enabled build types" FORCE)
+      ${CMAKE_BUILD_TYPE}
+      CACHE STRING "Enabled build types" FORCE)
   endif()
 endif()
 
@@ -98,12 +100,14 @@ include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
 # This overwrites `project_options` and sets `project_warnings`
 # uncomment the options to enable them:
 dynamic_project_options(
+
   # Note: PCH is disabled by default in developer mode because these headers become
   # globally included and they can mask other errors
   PCH_HEADERS
   <vector>
   <string> # This is a list of headers to pre-compile, here are some common ones
   ENABLE_CONAN
+
   # CONAN_OPTIONS    # Extra options to pass to conan
   # MSVC_WARNINGS    # Override the defaults for the MSVC warnings
   # CLANG_WARNINGS   # Override the defaults for the CLANG warnings
@@ -111,9 +115,11 @@ dynamic_project_options(
   CPPCHECK_OPTIONS
   --enable=style,performance,warning,portability
   --inline-suppr
+
   # We cannot act on a bug/missing feature of cppcheck
   --suppress=cppcheckError
   --suppress=internalAstError
+
   # if a file does not have an internalAstError, we get an unmatchedSuppression error
   --suppress=unmatchedSuppression
   --suppress=passedByValue
@@ -122,6 +128,7 @@ dynamic_project_options(
 )
 
 target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
+
 # TODO: The INTERFACE library NAMESPACE ALIAS are missing! CK
 add_library(myproject::project_options INTERFACE IMPORTED)
 add_library(myproject::project_warnings INTERFACE IMPORTED)
@@ -134,16 +141,11 @@ add_subdirectory(src)
 
 # Adding the tests:
 option(ENABLE_TESTING "Enable the tests" ${PROJECT_IS_TOP_LEVEL})
+
 if(ENABLE_TESTING)
   enable_testing()
   message(AUTHOR_WARNING "Building Tests. Be sure to check out test/constexpr_tests.cpp for constexpr testing")
   add_subdirectory(test)
-endif()
-
-option(ENABLE_FUZZING "Enable the fuzz tests" OFF)
-if(ENABLE_FUZZING)
-  message(AUTHOR_WARNING "Building Fuzz Tests, using fuzzing sanitizer https://www.llvm.org/docs/LibFuzzer.html")
-  add_subdirectory(fuzz_test)
 endif()
 
 # If MSVC is being used, and ASAN is enabled, we need to set the debugger environment
@@ -166,6 +168,7 @@ endif()
 # Add other targets that you want installed here, be default we just package the one executable
 # we know we want to ship
 package_project(TARGETS intro project_options project_warnings
+
   # FIXME: this does not work! CK
   # PRIVATE_DEPENDENCIES_CONFIGURED project_options project_warnings
 )
@@ -174,7 +177,7 @@ package_project(TARGETS intro project_options project_warnings
 # out potential ABI related issues before they start, while helping you
 # track a build to a specific GIT SHA
 set(CPACK_PACKAGE_FILE_NAME
-    "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}"
+  "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}"
 )
 
 include(CPack)

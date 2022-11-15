@@ -33,7 +33,7 @@ include(${_project_options_SOURCE_DIR}/Index.cmake)
 
 # Set the project name and language
 project(
-  myproject
+  longman
   VERSION 1.0.0
   DESCRIPTION ""
   HOMEPAGE_URL "https://github.com/iporoskun/longman"
@@ -130,8 +130,8 @@ dynamic_project_options(
 target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
 # TODO: The INTERFACE library NAMESPACE ALIAS are missing! CK
-add_library(myproject::project_options INTERFACE IMPORTED)
-add_library(myproject::project_warnings INTERFACE IMPORTED)
+add_library(longman::project_options INTERFACE IMPORTED)
+add_library(longman::project_warnings INTERFACE IMPORTED)
 
 # configure files based on CMake configuration options
 add_subdirectory(configured_files)

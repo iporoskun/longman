@@ -147,15 +147,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # configure files based on CMake configuration options
 add_subdirectory(configured_files)
 
-# Adding the src:
-add_subdirectory(src)
-
 # Adding the tests:
 option(ENABLE_TESTING "Enable the tests" ${PROJECT_IS_TOP_LEVEL})
 
 if(ENABLE_TESTING)
   enable_testing()
-  message(AUTHOR_WARNING "Building Tests. Be sure to check out test/constexpr_tests.cpp for constexpr testing")
   add_subdirectory(test)
 endif()
 
@@ -168,7 +164,7 @@ if(MSVC)
 endif()
 
 # set the startup project for the "play" button in MSVC
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT intro)
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT longman::longman)
 
 if(CMAKE_SKIP_INSTALL_RULES)
   return()
@@ -178,7 +174,7 @@ endif()
 
 # Add other targets that you want installed here, be default we just package the one executable
 # we know we want to ship
-package_project(TARGETS intro project_options project_warnings
+package_project(TARGETS longman project_options project_warnings
 
   # FIXME: this does not work! CK
   # PRIVATE_DEPENDENCIES_CONFIGURED project_options project_warnings

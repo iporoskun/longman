@@ -1,63 +1,20 @@
-# gui_starter_template
+# C++ implementation of Longman tidal equation
 
 [![ci](https://github.com/iporoskun/longman/actions/workflows/ci.yml/badge.svg)](https://github.com/iporoskun/longman/actions/workflows/ci.yml)
 [![codecov](https://app.codecov.io/gh/iporoskun/longman/branch/main/graph/badge.svg)](https://app.codecov.io/gh/iporoskun/longman)
 [![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/github/cpp-best-practices/gui_starter_template)](https://lgtm.com/projects/g/cpp-best-practices/gui_starter_template/context:cpp)
 [![CodeQL](https://github.com/iporoskun/longman/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/iporoskun/longman/actions/workflows/codeql-analysis.yml)
 
-## About gui_starter_template
-
-This is a C++ Best Practices GitHub template for getting up and running with C++ quickly.
-
-By default (collectively known as `ENABLE_DEVELOPER_MODE`)
-
- * Address Sanitizer and Undefined Behavior Sanitizer enabled where possible
- * Warnings as errors
- * clang-tidy and cppcheck static analysis
- * conan for dependencies
-
-It includes
-
- * a basic SDL example
- * examples for fuzz, unit, and constexpr testing
- * large github action testing matrix
-
-It requires
-
- * cmake
- * conan
- * a compiler
-
-For a simplified project, check out the [cmake_conan_boilerplate_template](https://github.com/cpp-best-practices/cmake_conan_boilerplate_template).
-
-Ths Boilerplate project will merge new features first, then they will be merged (as appropriate) into gui_starter_template.
-
 ## Getting Started
 
-### Use the Github template
+## Useful references
 
-First, click the green `Use this template` button near the top of this page.
-This will take you to Github's ['Generate Repository'](https://github.com/iporoskun/longman/generate) page.
-Fill in a repository name and short description, and click 'Create repository from template'.
-This will allow you to create a new repository in your Github account,
-prepopulated with the contents of this project.
+Following sources can be referred for further details on Longman equations:
 
-After creating the project please wait until the cleanup workflow has finished 
-setting up your project and commited the changes.
-
-Now you can clone the project locally and get to work!
-
-    git clone https://github.com/<user>/<your_new_repo>.git
+* [This publication](https://sbgf.org.br/revista/index.php/rbgf/article/viewFile/793/416) was used as a reference for mathematical details and parameters of the implementation.
+* The source code is the C++ port of original MATLAB implementation by Olga Bjelotomic Orsulic and Matej Varga      
 
 
+## Used libraries
 
-## More Details
-
- * [Dependency Setup](README_dependencies.md)
- * [Building Details](README_building.md)
- * [Troubleshooting](README_troubleshooting.md)
- * [Docker](README_docker.md)
-
-## Testing
-
-See [Catch2 tutorial](https://github.com/catchorg/Catch2/blob/master/docs/tutorial.md)
+* [Catch2](https://github.com/catchorg/Catch2/) for unit tests

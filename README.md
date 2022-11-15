@@ -1,7 +1,7 @@
 # C++ implementation of Longman tidal equation
 
 [![ci](https://github.com/iporoskun/longman/actions/workflows/ci.yml/badge.svg)](https://github.com/iporoskun/longman/actions/workflows/ci.yml)
-[![codecov](https://app.codecov.io/gh/iporoskun/longman/branch/main/graph/badge.svg)](https://app.codecov.io/gh/iporoskun/longman)
+[![codecov](https://codecov.io/gh/iporoskun/longman/branch/main/graph/badge.svg)](https://codecov.io/gh/iporoskun/longman)
 [![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/github/cpp-best-practices/gui_starter_template)](https://lgtm.com/projects/g/cpp-best-practices/gui_starter_template/context:cpp)
 [![CodeQL](https://github.com/iporoskun/longman/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/iporoskun/longman/actions/workflows/codeql-analysis.yml)
 

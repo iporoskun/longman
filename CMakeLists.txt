@@ -129,9 +129,20 @@ dynamic_project_options(
 
 target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
-# TODO: The INTERFACE library NAMESPACE ALIAS are missing! CK
 add_library(longman::project_options INTERFACE IMPORTED)
 add_library(longman::project_warnings INTERFACE IMPORTED)
+
+file(GLOB_RECURSE IPOROSKUN_LONGMAN_headers "${CMAKE_CURRENT_LIST_DIR}/include/*.hpp")
+file(GLOB_RECURSE IPOROSKUN_LONGMAN_sources "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
+
+add_library(${PROJECT_NAME} STATIC ${IPOROSKUN_LONGMAN_sources})
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")
+target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
 # configure files based on CMake configuration options
 add_subdirectory(configured_files)

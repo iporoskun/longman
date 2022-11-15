@@ -38,6 +38,7 @@ set_property(TARGET catch_main PROPERTY FOLDER "test")
 function(IPOROSKUN_LONGMAN_add_test path name)
   add_executable(${name} ${path})
   target_link_libraries(${name} PUBLIC
+    longman::longman
     longman::project_options
     longman::project_warnings
     catch_main

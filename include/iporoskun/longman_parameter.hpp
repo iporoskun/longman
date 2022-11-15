@@ -12,9 +12,9 @@ using duration_t = std::chrono::seconds;
 
 struct longman_parameter {
   struct pos { // position
-	double latitude; /* deg */
-	double longitude; /* deg */
-	double height; /* msl_orthometric_height, meter or cm*/
+	floating_t latitude; /* deg */
+	floating_t longitude; /* deg */
+	floating_t height; /* msl_orthometric_height, meter or cm*/
   } position;
   duration_t utc_offset;
 };

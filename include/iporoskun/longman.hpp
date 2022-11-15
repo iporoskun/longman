@@ -8,8 +8,8 @@
 namespace iporoskun::longman {
 
 struct result_type {
-  double delta_g_mgal;
-  double delta_g_ms2;
+  floating_t delta_g_mgal;
+  floating_t delta_g_ms2;
 };
 
 namespace details {
@@ -19,9 +19,9 @@ inline constexpr auto abs(T const& x) noexcept {
   return x < 0 ? -x : x;
 }
 
-inline constexpr double
-  dms2rad(double deg, double min = 0., double sec = 0.) noexcept {
-  const double angles_deg =
+inline constexpr floating_t
+  dms2rad(floating_t deg, floating_t min = 0., floating_t sec = 0.) noexcept {
+  const floating_t angles_deg =
 	details::abs(deg) + details::abs(min) / 60. + details::abs(sec) / 3600.;
   if (deg < 0. || min < 0. || sec < 0.) {
 	return -angles_deg * M_PI / 180.;
@@ -30,7 +30,7 @@ inline constexpr double
   }
 }
 
-inline constexpr double deg2rad(double deg) noexcept {
+inline constexpr floating_t deg2rad(floating_t deg) noexcept {
   return deg * M_PI / 180.;
 }
 
@@ -46,7 +46,7 @@ inline auto from_midnight(std::chrono::system_clock::time_point tp) noexcept {
   return std::chrono::floor<Duration>(time.to_duration());
 }
 
-inline double centuries_from_ref_date(
+inline floating_t centuries_from_ref_date(
   std::chrono::system_clock::time_point tp,
   std::chrono::system_clock::time_point ref_date = {
 	std::chrono::sys_days{ std::chrono::year{ 1899 } / 12
@@ -66,14 +66,14 @@ inline double centuries_from_ref_date(
   constexpr static auto amount_of_seconds_in_julian_century =
 	100. * 365.25 * 24. * 60. * 60.;
 
-  return static_cast<double>(diff.count())
-		 / static_cast<double>(amount_of_seconds_in_julian_century);
+  return static_cast<floating_t>(diff.count())
+		 / static_cast<floating_t>(amount_of_seconds_in_julian_century);
 }
 
 } // namespace details
 
-inline constexpr double
-  dms2deg(double deg, double min = 0., double sec = 0.) noexcept {
+inline constexpr floating_t
+  dms2deg(floating_t deg, floating_t min = 0., floating_t sec = 0.) noexcept {
   return details::dms2rad(deg, min, sec) * 180. / M_PI;
 }
 
@@ -108,26 +108,27 @@ class longman {
   time_point utc_time_;
   duration_t utc_offset_;
 
-  double sm_rad{};
-  double pm_rad{};
-  double hs_rad{};
-  double N_rad{};
-  double ps_rad{};
-  double es{};
+  floating_t sm_rad{};
+  floating_t pm_rad{};
+  floating_t hs_rad{};
+  floating_t N_rad{};
+  floating_t ps_rad{};
+  floating_t es{};
 
   longman_parameter::pos pos_deg_m;
   longman_parameter::pos pos_rad_cm;
 
-  double r{}; // [cm] distance from observation point to the center of the Earth
-  double d{}; // distance from Moon to the Earth's geocenter
-  double D{}; // distance from Sun to the Earth's geocenter
-  double Im_rad{}; // Inclination of the Moon's orbit to the equator
-  double nu{}; // Longitude in the celestial equator of its intersection A
-			   // with the Moon's orbit
-  double chi_m_rad{}; // right ascension of meridian of place of observations
-					  // reckoned from A
-  double chi_s_rad{}; // right ascension of meridian of place of observations
-					  // reckoned from the vernal equinox
+  floating_t
+	r{}; // [cm] distance from observation point to the center of the Earth
+  floating_t d{}; // distance from Moon to the Earth's geocenter
+  floating_t D{}; // distance from Sun to the Earth's geocenter
+  floating_t Im_rad{}; // Inclination of the Moon's orbit to the equator
+  floating_t nu{}; // Longitude in the celestial equator of its intersection A
+				   // with the Moon's orbit
+  floating_t chi_m_rad{}; // right ascension of meridian of place of
+						  // observations reckoned from A
+  floating_t chi_s_rad{}; // right ascension of meridian of place of
+						  // observations reckoned from the vernal equinox
 
 public:
   longman() = default;
@@ -154,19 +155,19 @@ public:
   [[nodiscard]] auto operator()(const TimePoint& local_time_of_msrmnt) noexcept
 	-> floating_t /*meters_per_second_squared_t*/;
 
-  static double mean_longitude_moon(double T) noexcept;
-  static double mean_longitude_lunar_perigee(double T) noexcept;
-  static double mean_longitude_sun(double T) noexcept;
-  static double longitude_of_moons_ascending_node(double T) noexcept;
-  static double mean_longitude_solar_perigee(double T) noexcept;
-  static double eccentricity_of_earths_orbit(double T) noexcept;
+  static floating_t mean_longitude_moon(floating_t T) noexcept;
+  static floating_t mean_longitude_lunar_perigee(floating_t T) noexcept;
+  static floating_t mean_longitude_sun(floating_t T) noexcept;
+  static floating_t longitude_of_moons_ascending_node(floating_t T) noexcept;
+  static floating_t mean_longitude_solar_perigee(floating_t T) noexcept;
+  static floating_t eccentricity_of_earths_orbit(floating_t T) noexcept;
 
-  static double
+  static floating_t
 	distance_parameter(const longman_parameter::pos& pos_rad_cm) noexcept;
-  double distance_center_moon_earth() noexcept;
-  double distance_center_sun_earth() noexcept;
-  double inclination_of_moon() const;
-  double longitude_celestial_equator() const;
+  floating_t distance_center_moon_earth() noexcept;
+  floating_t distance_center_sun_earth() noexcept;
+  floating_t inclination_of_moon() const;
+  floating_t longitude_celestial_equator() const;
 
   auto get_pos_rad_cm() const noexcept { return pos_rad_cm; }
 
@@ -174,7 +175,7 @@ private:
   template<class TimePoint>
   void set_time(const TimePoint& local_time) noexcept;
 
-  void calc_longitude_and_eccentricity(double T) noexcept;
+  void calc_longitude_and_eccentricity(floating_t T) noexcept;
 
   auto calculate_acceleration() -> floating_t
 	/*-> meters_per_second_squared_t*/;

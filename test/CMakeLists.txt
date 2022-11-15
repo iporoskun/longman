@@ -33,56 +33,33 @@ add_test(NAME cli.has_help COMMAND intro --help)
 add_test(NAME cli.version_matches COMMAND intro --version)
 set_tests_properties(cli.version_matches PROPERTIES PASS_REGULAR_EXPRESSION "${PROJECT_VERSION}")
 
-add_executable(tests tests.cpp)
-target_link_libraries(tests PRIVATE longman::project_warnings longman::project_options catch_main)
+set_property(TARGET catch_main PROPERTY FOLDER "test")
 
-# automatically discover tests that are defined in catch based test files you can modify the unittests. Set TEST_PREFIX
-# to whatever you want, or use different for different binaries
-catch_discover_tests(
-  tests
-  TEST_PREFIX
-  "unittests."
-  REPORTER
-  xml
-  OUTPUT_DIR
-  .
-  OUTPUT_PREFIX
-  "unittests."
-  OUTPUT_SUFFIX
-  .xml)
+function(IPOROSKUN_LONGMAN_add_test path name)
+  add_executable(${name} ${path})
+  target_link_libraries(${name} PUBLIC
+    longman::project_options
+    longman::project_warnings
+    catch_main
+  )
+  catch_discover_tests(${name}
+    TEST_PREFIX "${name}.."
+    EXTRA_ARGS
+    -s
+    --reporter=xml
+    --out=${name}.xml)
 
-# Add a file containing a set of constexpr tests
-add_executable(constexpr_tests constexpr_tests.cpp)
-target_link_libraries(constexpr_tests PRIVATE longman::project_options longman::project_warnings catch_main)
+  target_compile_definitions(${name} PRIVATE
+  )
 
-catch_discover_tests(
-  constexpr_tests
-  TEST_PREFIX
-  "constexpr."
-  REPORTER
-  xml
-  OUTPUT_DIR
-  .
-  OUTPUT_PREFIX
-  "constexpr."
-  OUTPUT_SUFFIX
-  .xml)
+  set_property(TARGET ${name} PROPERTY FOLDER "test")
+endfunction()
 
-# Disable the constexpr portion of the test, and build again this allows us to have an executable that we can debug when
-# things go wrong with the constexpr testing
-add_executable(relaxed_constexpr_tests constexpr_tests.cpp)
-target_link_libraries(relaxed_constexpr_tests PRIVATE longman::project_options longman::project_warnings catch_main)
-target_compile_definitions(relaxed_constexpr_tests PRIVATE -DCATCH_CONFIG_RUNTIME_STATIC_REQUIRE)
+file(GLOB_RECURSE IPOROSKUN_LONGMAN_test_list "${CMAKE_CURRENT_LIST_DIR}/*.cpp")
+LIST(REMOVE_DUPLICATES IPOROSKUN_LONGMAN_test_list)
+LIST(REMOVE_ITEM IPOROSKUN_LONGMAN_test_list "${CMAKE_CURRENT_LIST_DIR}/catch_main.cpp")
 
-catch_discover_tests(
-  relaxed_constexpr_tests
-  TEST_PREFIX
-  "relaxed_constexpr."
-  REPORTER
-  xml
-  OUTPUT_DIR
-  .
-  OUTPUT_PREFIX
-  "relaxed_constexpr."
-  OUTPUT_SUFFIX
-  .xml)
+FOREACH(file_path ${IPOROSKUN_LONGMAN_test_list})
+  get_filename_component(test_name ${file_path} NAME_WE)
+  IPOROSKUN_LONGMAN_add_test(${file_path} ${test_name})
+ENDFOREACH()

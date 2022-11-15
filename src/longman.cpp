@@ -17,7 +17,7 @@ auto longman::calculate_acceleration()
   using fhours_t = std::chrono::duration<floating_t, std::ratio<3600>>;
   const auto t0 = details::from_midnight<fhours_t>(utc_time_).count();
   const auto t_rad =
-	details::deg2rad(15. * (t0 - 12.) - (-1. * pos_deg_m.longitude));
+	details::deg2rad(15. * (t0 - 12.) + details::rad2deg(pos_rad_cm.longitude));
 
   chi_m_rad = t_rad + hs_rad - nu;
   chi_s_rad = t_rad + hs_rad;
@@ -140,10 +140,11 @@ floating_t longman::eccentricity_of_earths_orbit(floating_t T) noexcept { // es
 }
 
 floating_t longman::distance_parameter(
-  const longman_parameter::pos& pos_rad_cm) noexcept { // r
-  const auto C_2 = 1. / (1. + e_crt_2 * pow(sin(pos_rad_cm.latitude), 2.));
+  const longman_parameter::position_t& pos_rad_cm) noexcept { // r
+  const auto C_2 =
+	1. / (1. + e_crt_2 * pow(sin(pos_rad_cm.latitude.get()), 2.));
   const auto C = sqrt(C_2);
-  return C * a + pos_rad_cm.height;
+  return C * a + pos_rad_cm.height.get();
 }
 
 floating_t longman::distance_center_moon_earth() noexcept { // d

@@ -2,6 +2,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <math.h>
+#include <numbers>
 
 #include "longman_parameter.hpp"
 
@@ -14,6 +15,8 @@ struct result_type {
 
 namespace details {
 
+using namespace std::numbers;
+
 template<class T, std::enable_if_t<std::is_arithmetic_v<T>>...>
 inline constexpr auto abs(T const& x) noexcept {
   return x < 0 ? -x : x;
@@ -24,14 +27,18 @@ inline constexpr floating_t
   const floating_t angles_deg =
 	details::abs(deg) + details::abs(min) / 60. + details::abs(sec) / 3600.;
   if (deg < 0. || min < 0. || sec < 0.) {
-	return -angles_deg * M_PI / 180.;
+	return -angles_deg * M_PI / static_cast<floating_t>(180);
   } else {
-	return angles_deg * M_PI / 180.;
+	return angles_deg * M_PI / static_cast<floating_t>(180);
   }
 }
 
 inline constexpr floating_t deg2rad(floating_t deg) noexcept {
-  return deg * M_PI / 180.;
+  return deg * M_PI / static_cast<floating_t>(180);
+}
+
+inline constexpr floating_t rad2deg(floating_t rad) noexcept {
+  return rad / M_PI * static_cast<floating_t>(180);
 }
 
 inline auto
@@ -115,8 +122,8 @@ class longman {
   floating_t ps_rad{};
   floating_t es{};
 
-  longman_parameter::pos pos_deg_m;
-  longman_parameter::pos pos_rad_cm;
+  // longman_parameter::position_t pos_deg_m;
+  longman_parameter::position_t pos_rad_cm;
 
   floating_t
 	r{}; // [cm] distance from observation point to the center of the Earth
@@ -133,7 +140,7 @@ class longman {
 public:
   longman() = default;
   explicit longman(
-	const longman_parameter::pos& pos_of_msrmnt, duration_t utc_offset) {
+	const longman_parameter::position_t& pos_of_msrmnt, duration_t utc_offset) {
 	set_parameter(pos_of_msrmnt, utc_offset);
   }
 
@@ -142,13 +149,14 @@ public:
   }
 
   void set_parameter(
-	const longman_parameter::pos& pos_of_msrmnt,
+	const longman_parameter::position_t& pos_of_msrmnt,
 	duration_t utc_offset) noexcept {
 	utc_offset_ = utc_offset;
-	pos_deg_m = pos_of_msrmnt;
-	pos_rad_cm = { details::deg2rad(pos_of_msrmnt.latitude),
-				   details::deg2rad(pos_of_msrmnt.longitude),
-				   pos_of_msrmnt.height * 100. };
+	pos_rad_cm = longman_parameter::position_t{
+	  latitude{ details::deg2rad(pos_of_msrmnt.latitude) },
+	  longitude{ details::deg2rad(pos_of_msrmnt.longitude) },
+	  height{ pos_of_msrmnt.height * 100. }
+	};
   }
 
   template<class TimePoint>
@@ -162,8 +170,8 @@ public:
   static floating_t mean_longitude_solar_perigee(floating_t T) noexcept;
   static floating_t eccentricity_of_earths_orbit(floating_t T) noexcept;
 
-  static floating_t
-	distance_parameter(const longman_parameter::pos& pos_rad_cm) noexcept;
+  static floating_t distance_parameter(
+	const longman_parameter::position_t& pos_rad_cm) noexcept;
   floating_t distance_center_moon_earth() noexcept;
   floating_t distance_center_sun_earth() noexcept;
   floating_t inclination_of_moon() const;

@@ -117,26 +117,26 @@ TEST_CASE("comparision with matlab results") {
 
 	SECTION("T from matlab") {
 	  const auto result = 9314.140709778332;
-	  CHECK(longman::longman::mean_longitude_moon(T_matlab) == Approx(result));
+	  CHECK(longman::details::mean_longitude_moon(T_matlab) == Approx(result));
 	}
 
 	CHECK(
-	  longman::longman::mean_longitude_moon(T)
+	  longman::details::mean_longitude_moon(T)
 	  == Approx(9314.140709778332).epsilon(EPS));
 	CHECK(
-	  longman::longman::mean_longitude_lunar_perigee(T)
+	  longman::details::mean_longitude_lunar_perigee(T)
 	  == Approx(84.544418585647875).epsilon(EPS));
 	CHECK(
-	  longman::longman::mean_longitude_sun(T)
+	  longman::details::mean_longitude_sun(T)
 	  == Approx(7.012636463119221e+02).epsilon(EPS));
 	CHECK(
-	  longman::longman::longitude_of_moons_ascending_node(T)
+	  longman::details::longitude_of_moons_ascending_node(T)
 	  == Approx(-32.889490944928838).epsilon(EPS));
 	CHECK(
-	  longman::longman::mean_longitude_solar_perigee(T)
+	  longman::details::mean_longitude_solar_perigee(T)
 	  == Approx(4.941491045285590).epsilon(EPS));
 	CHECK(
-	  longman::longman::eccentricity_of_earths_orbit(T)
+	  longman::details::eccentricity_of_earths_orbit(T)
 	  == Approx(0.016704558175993).epsilon(EPS));
   }
 

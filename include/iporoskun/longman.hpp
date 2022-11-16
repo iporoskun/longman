@@ -105,6 +105,15 @@ inline constexpr floating_t beta = 1. + love_h2 - 3. / 2. * love_k2;
 inline constexpr floating_t rev_sec = 360. * 3600.;
 } // namespace constants
 
+namespace details {
+floating_t mean_longitude_moon(floating_t time) noexcept;
+floating_t mean_longitude_lunar_perigee(floating_t time) noexcept;
+floating_t mean_longitude_sun(floating_t time) noexcept;
+floating_t longitude_of_moons_ascending_node(floating_t time) noexcept;
+floating_t mean_longitude_solar_perigee(floating_t time) noexcept;
+floating_t eccentricity_of_earths_orbit(floating_t time) noexcept;
+} // namespace details
+
 
 class longman {
 public:
@@ -126,12 +135,6 @@ public:
   [[nodiscard]] auto operator()(const TimePoint& local_time_of_msrmnt) noexcept
 	-> floating_t /*meters_per_second_squared_t*/;
 
-  static floating_t mean_longitude_moon(floating_t time) noexcept;
-  static floating_t mean_longitude_lunar_perigee(floating_t time) noexcept;
-  static floating_t mean_longitude_sun(floating_t time) noexcept;
-  static floating_t longitude_of_moons_ascending_node(floating_t time) noexcept;
-  static floating_t mean_longitude_solar_perigee(floating_t time) noexcept;
-  static floating_t eccentricity_of_earths_orbit(floating_t time) noexcept;
 
   static floating_t distance_parameter(
 	const longman_parameter::position_t& pos_rad_cm) noexcept;

@@ -1,7 +1,5 @@
 #include <catch2/catch.hpp>
 #include <iporoskun/longman.hpp>
-#define _USE_MATH_DEFINES
-#include <math.h>
 
 // https://sbgf.org.br/revista/index.php/rbgf/article/viewFile/793/416
 

@@ -35,7 +35,7 @@ inline constexpr floating_t deg_to_rad(floating_t deg) noexcept {
   return deg * pi_v<floating_t> / static_cast<floating_t>(180);
 }
 
-inline constexpr floating_t rad2deg(floating_t rad) noexcept {
+inline constexpr floating_t rad_to_deg(floating_t rad) noexcept {
   return rad / pi_v<floating_t> * static_cast<floating_t>(180);
 }
 

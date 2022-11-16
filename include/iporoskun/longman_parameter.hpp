@@ -6,6 +6,8 @@
 #  define IPOROSKUN_LONGMAN_UNDERLYING_FLOATING_TYPE double
 #endif
 
+// if needed, define to disable: IPOROSKUN_LONGMAN_DISABLE_RUNTIME_CHECKS
+
 namespace iporoskun::longman {
 
 using floating_t = IPOROSKUN_LONGMAN_UNDERLYING_FLOATING_TYPE;

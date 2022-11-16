@@ -79,12 +79,12 @@ TEST_CASE("time from midnight") {
 
 TEST_CASE("creating longman object") {
 
-  SECTION("position and utc offset-time") { longman::longman longman(pos, 1h); }
+  SECTION("position and utc offset-time") { longman::longman longman(pos); }
 }
 
 TEST_CASE("using longman's operator()") {
 
-  longman::longman longman(pos, 1h);
+  longman::longman longman(pos);
 
   SECTION("") {
 	auto now = std::chrono::system_clock::now();
@@ -101,7 +101,7 @@ TEST_CASE("comparision with matlab results") {
   const auto position =
 	position_t{ longman::latitude(-22.733), longman::longitude(-90.50),
 				longman::height(0) };
-  longman::longman longman(position, 0h);
+  longman::longman longman(position);
 
   const auto EPS = 1e-14;
 

@@ -124,20 +124,18 @@ inline longman_parameter::position_t
 
 
 class longman {
+  using time_point = std::chrono::system_clock::time_point;
+
 public:
-  longman(
-	longman_parameter::position_t const& measurement_position,
-	duration_t utc_offset)
-	: utc_offset_{ utc_offset } {
+  longman(longman_parameter::position_t const& measurement_position) {
 	pos_rad_cm =
 	  details::position_from_deg_meter_to_rad_cm(measurement_position);
   }
 
   explicit longman(const longman_parameter& parameter)
-	: longman(parameter.position, parameter.utc_offset) {}
+	: longman(parameter.position) {}
 
-  template<class TimePoint>
-  [[nodiscard]] auto operator()(const TimePoint& local_time_of_msrmnt) noexcept
+  [[nodiscard]] auto operator()(const time_point& local_time_of_msrmnt) noexcept
 	-> floating_t /*meters_per_second_squared_t*/;
 
 
@@ -149,17 +147,11 @@ public:
   floating_t longitude_celestial_equator() const;
 
 private:
-  template<class TimePoint>
-  void set_time(const TimePoint& local_time) noexcept;
-
   void calc_longitude_and_eccentricity(floating_t time) noexcept;
 
   auto calculate_acceleration() -> floating_t
 	/*-> meters_per_second_squared_t*/;
 
-  using time_point = std::chrono::sys_time<duration_t>;
-  duration_t utc_offset_;
-  time_point local_time_;
   time_point utc_time_;
 
   longman_parameter::position_t pos_rad_cm;
@@ -184,15 +176,14 @@ private:
 						// observations reckoned from the vernal equinox
 };
 
-template<class TimePoint>
-inline auto longman::operator()(const TimePoint& local_time_of_msrmnt) noexcept
+// template<class TimePoint>
+inline auto longman::operator()(const time_point& utc_time) noexcept
   -> floating_t /*meters_per_second_squared_t*/
 {
   using namespace std::chrono;
-
-  set_time<TimePoint>(local_time_of_msrmnt);
-  const auto time = details::julian_centuries_from_reference_date(
-	floor<seconds>(local_time_of_msrmnt));
+  utc_time_ = utc_time;
+  const auto time =
+	details::julian_centuries_from_reference_date(floor<seconds>(utc_time));
 
   calc_longitude_and_eccentricity(time);
   r = distance_parameter(pos_rad_cm);
@@ -202,12 +193,6 @@ inline auto longman::operator()(const TimePoint& local_time_of_msrmnt) noexcept
   nu = longitude_celestial_equator();
 
   return calculate_acceleration();
-}
-
-template<class TimePoint>
-inline void longman::set_time(const TimePoint& local_time) noexcept {
-  local_time_ = std::chrono::floor<std::chrono::seconds>(local_time);
-  utc_time_ = local_time_ - utc_offset_;
 }
 
 } // namespace iporoskun::longman

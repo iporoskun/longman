@@ -5,7 +5,7 @@ namespace iporoskun::longman::details {
 // Implementation from
 // https://www.fluentcpp.com/2016/12/08/strong-types-for-strong-interfaces/
 
-template<class T>
+template<class T, class /*TagType*/>
 class named_type {
 public:
   explicit named_type(T const& value) noexcept

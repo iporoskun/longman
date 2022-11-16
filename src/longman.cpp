@@ -115,7 +115,7 @@ void longman::calc_longitude_and_eccentricity(floating_t time) noexcept {
   es = details::eccentricity_of_earths_orbit(time);
 }
 
-auto longman::calculate_acceleration(const time_point& utc_time)
+auto longman::calculate_acceleration(const time_point& utc_time) const
   -> floating_t /* meters_per_second_squared_t*/
 {
   using namespace constants;
@@ -124,6 +124,9 @@ auto longman::calculate_acceleration(const time_point& utc_time)
   const auto t_rad = details::deg_to_rad(
 	15. * (t0 - 12.) + details::rad_to_deg(pos_rad_cm.longitude));
 
+  // Longitude in the celestial equator of its intersection A with the Moon's
+  // orbit
+  const auto nu = longitude_celestial_equator();
 
   const auto cos_alpha =
 	cos(N_rad) * cos(nu) + sin(N_rad) * sin(nu) * cos(omega);
@@ -142,14 +145,17 @@ auto longman::calculate_acceleration(const time_point& utc_time)
   const auto L_sun_rad = hs_rad + 2. * es * sin(hs_rad - ps_rad);
 
   // Zenith angle of the Moon
-  chi_m_rad = t_rad + hs_rad - nu;
+  // e.g. right ascension of meridian of place of observations reckoned from A
+  const auto chi_m_rad = t_rad + hs_rad - nu;
   const auto cos_Zm =
 	sin(pos_rad_cm.latitude) * sin(Im_rad) * sin(L_m_rad)
 	+ cos(pos_rad_cm.latitude)
 		* (pow(cos(Im_rad / 2.), 2.) * cos(L_m_rad - chi_m_rad) + pow(sin(Im_rad / 2.), 2.) * cos(L_m_rad + chi_m_rad));
 
   // Zenith angle of the Sun
-  chi_s_rad = t_rad + hs_rad;
+  // e.g. right ascension of meridian of place of observations reckoned from the
+  // vernal equinox
+  const auto chi_s_rad = t_rad + hs_rad;
   const auto cos_Zs =
 	sin(pos_rad_cm.latitude) * sin(omega) * sin(L_sun_rad)
 	+ cos(pos_rad_cm.latitude)
@@ -177,7 +183,7 @@ floating_t
   return C * constants::a + pos_rad_cm.height.get();
 }
 
-floating_t longman::distance_center_moon_earth() noexcept { // d
+floating_t longman::distance_center_moon_earth() const noexcept { // d
   using namespace constants;
   const auto a_moon = 1. / (c_m * (1. - pow(e_m, 2.)));
   const auto recip_d =
@@ -188,7 +194,7 @@ floating_t longman::distance_center_moon_earth() noexcept { // d
   return 1. / recip_d;
 }
 
-floating_t longman::distance_center_sun_earth() noexcept { // D
+floating_t longman::distance_center_sun_earth() const noexcept { // D
   using namespace constants;
   const auto a_sun = 1. / (c_s * (1. - pow(es, 2.)));
   const auto recip_D = ((1. / c_s) + a_sun * es * cos(hs_rad - ps_rad));
@@ -203,8 +209,8 @@ floating_t longman::inclination_of_moon() const { // Im_rad
   if (
 	((inc_moon_rad * 180 / std::numbers::pi) < 18)
 	|| ((inc_moon_rad * 180 / std::numbers::pi) > 28)) {
-	throw std::logic_error("Inclination of the Moon's orbit to the equator "
-						   "is outside of the normal range.");
+	throw std::runtime_error("Inclination of the Moon's orbit to the equator "
+							 "is outside of the normal range.");
   }
 #endif
   return inc_moon_rad;
@@ -216,7 +222,7 @@ floating_t longman::longitude_celestial_equator() const { // nu
   if (
 	((nu_t * 180 / std::numbers::pi_v<floating_t>) < -15)
 	|| ((nu_t * 180 / std::numbers::pi_v<floating_t>) > 15)) {
-	throw std::logic_error(
+	throw std::runtime_error(
 	  "Longitude in the celestial equator is not correct.");
   }
 #endif

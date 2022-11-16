@@ -111,15 +111,15 @@ public:
 
   static floating_t
 	distance_to_earth_centre(const position& pos_rad_cm) noexcept;
-  floating_t distance_center_moon_earth() noexcept;
-  floating_t distance_center_sun_earth() noexcept;
+  floating_t distance_center_moon_earth() const noexcept;
+  floating_t distance_center_sun_earth() const noexcept;
   floating_t inclination_of_moon() const;
   floating_t longitude_celestial_equator() const;
 
 private:
   void calc_longitude_and_eccentricity(floating_t time) noexcept;
 
-  auto calculate_acceleration(const time_point& utc_time) -> floating_t
+  auto calculate_acceleration(const time_point& utc_time) const -> floating_t
 	/*-> meters_per_second_squared_t*/;
 
   position pos_rad_cm;
@@ -136,12 +136,6 @@ private:
   floating_t d; // distance from Moon to the Earth's geocenter
   floating_t D; // distance from Sun to the Earth's geocenter
   floating_t Im_rad; // Inclination of the Moon's orbit to the equator
-  floating_t nu; // Longitude in the celestial equator of its
-				 // intersection A with the Moon's orbit
-  floating_t chi_m_rad; // right ascension of meridian of place of
-						// observations reckoned from A
-  floating_t chi_s_rad; // right ascension of meridian of place of
-						// observations reckoned from the vernal equinox
 };
 
 inline auto longman::operator()(const time_point& utc_time) noexcept
@@ -156,7 +150,6 @@ inline auto longman::operator()(const time_point& utc_time) noexcept
   d = distance_center_moon_earth();
   D = distance_center_sun_earth();
   Im_rad = inclination_of_moon();
-  nu = longitude_celestial_equator();
 
   return calculate_acceleration(utc_time);
 }

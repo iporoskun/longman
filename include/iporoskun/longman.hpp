@@ -81,6 +81,29 @@ inline constexpr floating_t degree_minute_second_to_degree(
 		 / std::numbers::pi_v<floating_t>;
 }
 
+namespace constants {
+inline constexpr floating_t a = 6.378270e8;
+inline constexpr floating_t e_crt_2 = 0.006738;
+
+inline constexpr floating_t G = 6.674e-8;
+inline constexpr floating_t M_m = 7.3537e25;
+inline constexpr floating_t M_s = 1.993e33;
+
+inline constexpr floating_t m_s2m = 0.074804;
+inline constexpr floating_t e_m = 0.05490;
+inline constexpr floating_t c_m = 3.84402e10;
+inline constexpr floating_t c_s = 1.495e13;
+inline constexpr floating_t omega = details::dms2rad(23., 26., 21.48);
+inline constexpr floating_t i = details::deg2rad(5.145);
+
+inline constexpr floating_t love_h2 = 0.612;
+inline constexpr floating_t love_k2 = 0.303;
+inline constexpr floating_t beta = 1. + love_h2 - 3. / 2. * love_k2;
+
+inline constexpr floating_t rev_sec = 360. * 3600.;
+} // namespace constants
+
+
 // Advances in Geophysical Methods Applied to Forensic Investigations
 // https://books.google.de/books?id=NU7iDwAAQBAJ&pg=PA141&lpg=PA141&dq=Loveh2%3D0.612;+Lovek2%3D0.303;+beta%3D1%2BLoveh2-3/2*Lovek2&source=bl&ots=ZZV4OSN9e1&sig=ACfU3U1ffqTuzBzJKl4HM4VvwXFmc5Y8kA&hl=de&sa=X&ved=2ahUKEwj818LDvLftAhUi2uAKHSFOBlAQ6AEwAHoECAEQAg#v=onepage&q=Loveh2%3D0.612%3B%20Lovek2%3D0.303%3B%20beta%3D1%2BLoveh2-3%2F2*Lovek2&f=false
 
@@ -136,26 +159,6 @@ private:
 
   auto calculate_acceleration() -> floating_t
 	/*-> meters_per_second_squared_t*/;
-
-  constexpr static floating_t a = 6.378270e8;
-  constexpr static floating_t e_crt_2 = 0.006738;
-
-  constexpr static floating_t G = 6.674e-8;
-  constexpr static floating_t M_m = 7.3537e25;
-  constexpr static floating_t M_s = 1.993e33;
-
-  constexpr static floating_t m_s2m = 0.074804;
-  constexpr static floating_t e_m = 0.05490;
-  constexpr static floating_t c_m = 3.84402e10;
-  constexpr static floating_t c_s = 1.495e13;
-  constexpr static floating_t omega = details::dms2rad(23., 26., 21.48);
-  constexpr static floating_t i = details::deg2rad(5.145);
-
-  constexpr static floating_t love_h2 = 0.612;
-  constexpr static floating_t love_k2 = 0.303;
-  constexpr static floating_t beta = 1. + love_h2 - 3. / 2. * love_k2;
-
-  constexpr static floating_t rev_sec = 360. * 3600.;
 
   using time_point = std::chrono::sys_time<duration_t>;
   time_point local_time_;

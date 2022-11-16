@@ -15,6 +15,7 @@ void longman::calc_longitude_and_eccentricity(floating_t time) noexcept {
 auto longman::calculate_acceleration()
   -> floating_t /* meters_per_second_squared_t*/
 {
+  using namespace constants;
   using fhours_t = std::chrono::duration<floating_t, std::ratio<3600>>;
   const auto t0 = details::from_midnight<fhours_t>(utc_time_).count();
   const auto t_rad =
@@ -72,7 +73,7 @@ floating_t longman::mean_longitude_moon(floating_t time) noexcept { // sm_rad
 
   const auto sm_rad =
 	details::dms2rad(270., 26., 11.72)
-	+ details::deg2rad((1336. * rev_sec + 1108406.05) / 3600.) * time
+	+ details::deg2rad((1336. * constants::rev_sec + 1108406.05) / 3600.) * time
 	+ details::deg2rad(7.128 / 3600.) * std::pow(time, 2.)
 	+ details::deg2rad(0.0072 / 3600.) * std::pow(time, 3.);
 
@@ -82,13 +83,13 @@ floating_t longman::mean_longitude_moon(floating_t time) noexcept { // sm_rad
 floating_t
   longman::mean_longitude_lunar_perigee(floating_t time) noexcept { // pm_rad
   // const auto pm_rad = details::dms2rad(334., 19., 40.87) +
-  // details::deg2rad((11. * rev_sec + 392515.94) / 3600.)*time -
+  // details::deg2rad((11. *  constants::rev_sec + 392515.94) / 3600.)*time -
   // details::deg2rad(37.24 / 3600.)*std::pow(time, 2.) - details::deg2rad(0.045
   // / 3600.)*std::pow(time, 3.);
 
   const auto pm_rad =
 	details::dms2rad(334., 19., 46.42)
-	+ details::deg2rad((11. * rev_sec + 392522.51) / 3600.) * time
+	+ details::deg2rad((11. * constants::rev_sec + 392522.51) / 3600.) * time
 	- details::deg2rad(37.15 / 3600.) * std::pow(time, 2.)
 	- details::deg2rad(0.036 / 3600.) * std::pow(time, 3.);
 
@@ -116,7 +117,7 @@ floating_t longman::longitude_of_moons_ascending_node(
 
   const auto N_rad =
 	details::dms2rad(259., 10., 59.81)
-	- details::deg2rad((5. * rev_sec + 482911.24) / 3600.) * time
+	- details::deg2rad((5. * constants::rev_sec + 482911.24) / 3600.) * time
 	+ details::deg2rad(7.48 / 3600.) * std::pow(time, 2.)
 	+ details::deg2rad(0.007 / 3600.) * std::pow(time, 3.);
   return N_rad;
@@ -145,12 +146,13 @@ floating_t
 floating_t longman::distance_parameter(
   const longman_parameter::position_t& pos_rad_cm) noexcept { // r
   const auto C_2 =
-	1. / (1. + e_crt_2 * pow(sin(pos_rad_cm.latitude.get()), 2.));
+	1. / (1. + constants::e_crt_2 * pow(sin(pos_rad_cm.latitude.get()), 2.));
   const auto C = sqrt(C_2);
-  return C * a + pos_rad_cm.height.get();
+  return C * constants::a + pos_rad_cm.height.get();
 }
 
 floating_t longman::distance_center_moon_earth() noexcept { // d
+  using namespace constants;
   const auto a_moon = 1. / (c_m * (1. - pow(e_m, 2.)));
   const auto recip_d =
 	1. / c_m + a_moon * e_m * cos(sm_rad - pm_rad)
@@ -161,12 +163,14 @@ floating_t longman::distance_center_moon_earth() noexcept { // d
 }
 
 floating_t longman::distance_center_sun_earth() noexcept { // D
+  using namespace constants;
   const auto a_sun = 1. / (c_s * (1. - pow(es, 2.)));
   const auto recip_D = ((1. / c_s) + a_sun * es * cos(hs_rad - ps_rad));
   return 1. / recip_D;
 }
 
 floating_t longman::inclination_of_moon() const { // Im_rad
+  using namespace constants;
   const auto inc_moon_rad =
 	acos(cos(omega) * cos(i) - sin(omega) * sin(i) * cos(N_rad));
   if (
@@ -179,10 +183,10 @@ floating_t longman::inclination_of_moon() const { // Im_rad
 }
 
 floating_t longman::longitude_celestial_equator() const { // nu
-  const auto nu_t = asin(sin(i) * sin(N_rad) / sin(Im_rad));
+  const auto nu_t = asin(sin(constants::i) * sin(N_rad) / sin(Im_rad));
   if (
-	((nu_t * 180 / std::numbers::pi) < -15)
-	|| ((nu_t * 180 / std::numbers::pi) > 15)) {
+	((nu_t * 180 / std::numbers::pi_v<floating_t>) < -15)
+	|| ((nu_t * 180 / std::numbers::pi_v<floating_t>) > 15)) {
 	throw std::logic_error(
 	  "Longitude in the celestial equator is not correct.");
   }

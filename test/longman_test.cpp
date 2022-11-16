@@ -19,15 +19,15 @@ TEST_CASE("angle transformations") {
 
   SECTION("deg min sec to radians") {
 
-	constexpr auto positive = longman::details::dms2rad(270., 26., 11.72);
-	constexpr auto negative = longman::details::dms2rad(334., 19., 46.42);
+	constexpr auto positive = longman::details::dms_to_rad(270., 26., 11.72);
+	constexpr auto negative = longman::details::dms_to_rad(334., 19., 46.42);
 
 	CHECK(positive == Approx(4.720008893));
 	CHECK(negative == Approx(5.835151628));
   }
 
   SECTION("degree to rad") {
-	CHECK(longman::details::deg2rad(45) == Approx(0.785398163397));
+	CHECK(longman::details::deg_to_rad(45) == Approx(0.785398163397));
   }
 
   SECTION("megree-min-sec to deg") {

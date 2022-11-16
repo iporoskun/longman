@@ -20,8 +20,8 @@ inline constexpr auto abs(T const& x) noexcept {
   return x < 0 ? -x : x;
 }
 
-inline constexpr floating_t
-  dms2rad(floating_t deg, floating_t min = 0., floating_t sec = 0.) noexcept {
+inline constexpr floating_t dms_to_rad(
+  floating_t deg, floating_t min = 0., floating_t sec = 0.) noexcept {
   const floating_t angles_deg =
 	details::abs(deg) + details::abs(min) / 60. + details::abs(sec) / 3600.;
   if (deg < 0. || min < 0. || sec < 0.) {
@@ -31,7 +31,7 @@ inline constexpr floating_t
   }
 }
 
-inline constexpr floating_t deg2rad(floating_t deg) noexcept {
+inline constexpr floating_t deg_to_rad(floating_t deg) noexcept {
   return deg * pi_v<floating_t> / static_cast<floating_t>(180);
 }
 
@@ -77,11 +77,13 @@ inline floating_t julian_centuries_from_ref_date(
 
 inline constexpr floating_t degree_minute_second_to_degree(
   floating_t deg, floating_t min, floating_t sec) noexcept {
-  return details::dms2rad(deg, min, sec) * 180.
+  return details::dms_to_rad(deg, min, sec) * 180.
 		 / std::numbers::pi_v<floating_t>;
 }
 
 namespace constants {
+// Advances in Geophysical Methods Applied to Forensic Investigations
+// https://shorturl.at/azJ49
 inline constexpr floating_t a = 6.378270e8;
 inline constexpr floating_t e_crt_2 = 0.006738;
 
@@ -93,8 +95,8 @@ inline constexpr floating_t m_s2m = 0.074804;
 inline constexpr floating_t e_m = 0.05490;
 inline constexpr floating_t c_m = 3.84402e10;
 inline constexpr floating_t c_s = 1.495e13;
-inline constexpr floating_t omega = details::dms2rad(23., 26., 21.48);
-inline constexpr floating_t i = details::deg2rad(5.145);
+inline constexpr floating_t omega = details::dms_to_rad(23., 26., 21.48);
+inline constexpr floating_t i = details::deg_to_rad(5.145);
 
 inline constexpr floating_t love_h2 = 0.612;
 inline constexpr floating_t love_k2 = 0.303;
@@ -104,10 +106,6 @@ inline constexpr floating_t rev_sec = 360. * 3600.;
 } // namespace constants
 
 
-// Advances in Geophysical Methods Applied to Forensic Investigations
-// https://books.google.de/books?id=NU7iDwAAQBAJ&pg=PA141&lpg=PA141&dq=Loveh2%3D0.612;+Lovek2%3D0.303;+beta%3D1%2BLoveh2-3/2*Lovek2&source=bl&ots=ZZV4OSN9e1&sig=ACfU3U1ffqTuzBzJKl4HM4VvwXFmc5Y8kA&hl=de&sa=X&ved=2ahUKEwj818LDvLftAhUi2uAKHSFOBlAQ6AEwAHoECAEQAg#v=onepage&q=Loveh2%3D0.612%3B%20Lovek2%3D0.303%3B%20beta%3D1%2BLoveh2-3%2F2*Lovek2&f=false
-
-
 class longman {
 public:
   longman() = default;
@@ -115,8 +113,8 @@ public:
 	const longman_parameter::position_t& pos_of_msrmnt, duration_t utc_offset) {
 	utc_offset_ = utc_offset;
 	pos_rad_cm = longman_parameter::position_t{
-	  latitude{ details::deg2rad(pos_of_msrmnt.latitude) },
-	  longitude{ details::deg2rad(pos_of_msrmnt.longitude) },
+	  latitude{ details::deg_to_rad(pos_of_msrmnt.latitude) },
+	  longitude{ details::deg_to_rad(pos_of_msrmnt.longitude) },
 	  height{ pos_of_msrmnt.height * 100. }
 	};
   }

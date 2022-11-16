@@ -143,9 +143,9 @@ TEST_CASE("comparision with matlab results") {
   const auto discard = longman(time);
 
   SECTION("distances in cm") {
-	CHECK(
-	  longman.distance_parameter(longman.get_pos_rad_cm())
-	  == (6.375063476365359e+08));
+	const auto rad_cm_param =
+	  longman::details::position_from_deg_meter_to_rad_cm(position);
+	CHECK(longman.distance_parameter(rad_cm_param) == (6.375063476365359e+08));
 
 	CHECK(
 	  longman.distance_center_moon_earth()

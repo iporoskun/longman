@@ -112,20 +112,25 @@ floating_t mean_longitude_sun(floating_t time) noexcept;
 floating_t longitude_of_moons_ascending_node(floating_t time) noexcept;
 floating_t mean_longitude_solar_perigee(floating_t time) noexcept;
 floating_t eccentricity_of_earths_orbit(floating_t time) noexcept;
+
+inline longman_parameter::position_t
+  position_from_deg_meter_to_rad_cm(longman_parameter::position_t const& pos) {
+  return longman_parameter::position_t{
+	latitude{ details::deg_to_rad(pos.latitude) },
+	longitude{ details::deg_to_rad(pos.longitude) }, height{ pos.height * 100. }
+  };
+}
 } // namespace details
 
 
 class longman {
 public:
-  longman() = default;
-  explicit longman(
-	const longman_parameter::position_t& pos_of_msrmnt, duration_t utc_offset) {
-	utc_offset_ = utc_offset;
-	pos_rad_cm = longman_parameter::position_t{
-	  latitude{ details::deg_to_rad(pos_of_msrmnt.latitude) },
-	  longitude{ details::deg_to_rad(pos_of_msrmnt.longitude) },
-	  height{ pos_of_msrmnt.height * 100. }
-	};
+  longman(
+	longman_parameter::position_t const& measurement_position,
+	duration_t utc_offset)
+	: utc_offset_{ utc_offset } {
+	pos_rad_cm =
+	  details::position_from_deg_meter_to_rad_cm(measurement_position);
   }
 
   explicit longman(const longman_parameter& parameter)
@@ -143,8 +148,6 @@ public:
   floating_t inclination_of_moon() const;
   floating_t longitude_celestial_equator() const;
 
-  auto get_pos_rad_cm() const noexcept { return pos_rad_cm; }
-
 private:
   template<class TimePoint>
   void set_time(const TimePoint& local_time) noexcept;
@@ -155,9 +158,11 @@ private:
 	/*-> meters_per_second_squared_t*/;
 
   using time_point = std::chrono::sys_time<duration_t>;
+  duration_t utc_offset_;
   time_point local_time_;
   time_point utc_time_;
-  duration_t utc_offset_;
+
+  longman_parameter::position_t pos_rad_cm;
 
   floating_t sm_rad;
   floating_t pm_rad;
@@ -165,8 +170,6 @@ private:
   floating_t N_rad;
   floating_t ps_rad;
   floating_t es;
-
-  longman_parameter::position_t pos_rad_cm;
 
   floating_t
 	r; // [cm] distance from observation point to the center of the Earth

@@ -19,7 +19,7 @@ struct longman_parameter {
   struct position_t {
 	latitude latitude; /* deg */
 	longitude longitude; /* deg */
-	height height; /* msl_orthometric_height, meter or cm*/
+	height height; /* msl_orthometric_height, meter and also cm*/
   } position;
   duration_t utc_offset;
 };

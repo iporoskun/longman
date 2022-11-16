@@ -7,6 +7,17 @@
 
 ## Getting Started
 
+The time point for the calculation must be given as UTC (+0h). To compute the acceleration at your local time you can do the following: 
+
+```cpp
+using namespace std::literals::chrono_literals;
+const auto now = std::chrono::system_clock::now();
+const auto now_as_utc = now - 1h; // -1 hour for UTC+1
+// or directly use 
+// const auto now_as_utc = std::chrono::utc_clock::now();
+const auto acceleration = longman(my_position, now_as_utc);
+```
+
 ## Useful references
 
 Following sources can be referred for further details on Longman equations:

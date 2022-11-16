@@ -51,18 +51,18 @@ inline auto from_midnight(std::chrono::system_clock::time_point tp) noexcept {
   return std::chrono::floor<Duration>(time.to_duration());
 }
 
-inline floating_t julian_centuries_from_ref_date(
-  std::chrono::system_clock::time_point tp,
-  std::chrono::system_clock::time_point ref_date = {
-	std::chrono::sys_days{ std::chrono::year{ 1899 } / 12
-						   / std::chrono::day{ 31 } }
-	+ std::chrono::hours{ 12 } }) noexcept {
+inline floating_t julian_centuries_from_reference_date(
+  std::chrono::system_clock::time_point tp) noexcept {
 
   using std::chrono::seconds;
   using namespace std::chrono;
 
+  static constexpr system_clock::time_point reference_date = {
+	sys_days{ year{ 1899 } / 12 / day{ 31 } } + hours{ 12 }
+  };
+
   const auto dp = floor<days>(tp);
-  const auto diff_days = sys_days{ dp } - ref_date;
+  const auto diff_days = sys_days{ dp } - reference_date;
   const auto time_diff = from_midnight<seconds>(tp);
   const auto total_diff = floor<seconds>(diff_days) + time_diff;
 
@@ -191,7 +191,7 @@ inline auto longman::operator()(const TimePoint& local_time_of_msrmnt) noexcept
   using namespace std::chrono;
 
   set_time<TimePoint>(local_time_of_msrmnt);
-  const auto time = details::julian_centuries_from_ref_date(
+  const auto time = details::julian_centuries_from_reference_date(
 	floor<seconds>(local_time_of_msrmnt));
 
   calc_longitude_and_eccentricity(time);

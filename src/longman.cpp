@@ -3,13 +3,13 @@
 
 namespace iporoskun::longman {
 
-void longman::calc_longitude_and_eccentricity(floating_t T) noexcept {
-  sm_rad = mean_longitude_moon(T);
-  pm_rad = mean_longitude_lunar_perigee(T);
-  hs_rad = mean_longitude_sun(T);
-  N_rad = longitude_of_moons_ascending_node(T);
-  ps_rad = mean_longitude_solar_perigee(T);
-  es = eccentricity_of_earths_orbit(T);
+void longman::calc_longitude_and_eccentricity(floating_t time) noexcept {
+  sm_rad = mean_longitude_moon(time);
+  pm_rad = mean_longitude_lunar_perigee(time);
+  hs_rad = mean_longitude_sun(time);
+  N_rad = longitude_of_moons_ascending_node(time);
+  ps_rad = mean_longitude_solar_perigee(time);
+  es = eccentricity_of_earths_orbit(time);
 }
 
 auto longman::calculate_acceleration()
@@ -64,80 +64,82 @@ auto longman::calculate_acceleration()
   return /*meters_per_second_squared_t*/ floating_t{ g0_gal / 100. };
 }
 
-floating_t longman::mean_longitude_moon(floating_t T) noexcept { // sm_rad
+floating_t longman::mean_longitude_moon(floating_t time) noexcept { // sm_rad
   // const auto sm_rad = details::dms2rad(270., 26., 14.72) +
-  // details::deg2rad((1336. * rev_sec + 1108411.20) / 3600.)*T +
-  // details::deg2rad(9.09 / 3600.)*std::pow(T, 2.) + details::deg2rad(0.0068
-  // / 3600.)*std::pow(T, 3.);
+  // details::deg2rad((1336. * rev_sec + 1108411.20) / 3600.)*time +
+  // details::deg2rad(9.09 / 3600.)*std::pow(time, 2.) + details::deg2rad(0.0068
+  // / 3600.)*std::pow(time, 3.);
 
   const auto sm_rad =
 	details::dms2rad(270., 26., 11.72)
-	+ details::deg2rad((1336. * rev_sec + 1108406.05) / 3600.) * T
-	+ details::deg2rad(7.128 / 3600.) * std::pow(T, 2.)
-	+ details::deg2rad(0.0072 / 3600.) * std::pow(T, 3.);
+	+ details::deg2rad((1336. * rev_sec + 1108406.05) / 3600.) * time
+	+ details::deg2rad(7.128 / 3600.) * std::pow(time, 2.)
+	+ details::deg2rad(0.0072 / 3600.) * std::pow(time, 3.);
 
   return sm_rad;
 }
 
 floating_t
-  longman::mean_longitude_lunar_perigee(floating_t T) noexcept { // pm_rad
+  longman::mean_longitude_lunar_perigee(floating_t time) noexcept { // pm_rad
   // const auto pm_rad = details::dms2rad(334., 19., 40.87) +
-  // details::deg2rad((11. * rev_sec + 392515.94) / 3600.)*T -
-  // details::deg2rad(37.24 / 3600.)*std::pow(T, 2.) - details::deg2rad(0.045
-  // / 3600.)*std::pow(T, 3.);
+  // details::deg2rad((11. * rev_sec + 392515.94) / 3600.)*time -
+  // details::deg2rad(37.24 / 3600.)*std::pow(time, 2.) - details::deg2rad(0.045
+  // / 3600.)*std::pow(time, 3.);
 
   const auto pm_rad =
 	details::dms2rad(334., 19., 46.42)
-	+ details::deg2rad((11. * rev_sec + 392522.51) / 3600.) * T
-	- details::deg2rad(37.15 / 3600.) * std::pow(T, 2.)
-	- details::deg2rad(0.036 / 3600.) * std::pow(T, 3.);
+	+ details::deg2rad((11. * rev_sec + 392522.51) / 3600.) * time
+	- details::deg2rad(37.15 / 3600.) * std::pow(time, 2.)
+	- details::deg2rad(0.036 / 3600.) * std::pow(time, 3.);
 
   return pm_rad;
 }
 
-floating_t longman::mean_longitude_sun(floating_t T) noexcept { // hs_rad
+floating_t longman::mean_longitude_sun(floating_t time) noexcept { // hs_rad
   // const auto hs_rad = details::dms2rad(279., 41., 48.04) +
-  // details::deg2rad(129602768.13 / 3600.)*T + details::deg2rad(1.089 /
-  // 3600.)*std::pow(T, 2.);
+  // details::deg2rad(129602768.13 / 3600.)*time + details::deg2rad(1.089 /
+  // 3600.)*std::pow(time, 2.);
 
   const auto hs_rad = details::dms2rad(279., 41., 48.05)
-					  + details::deg2rad(129602768.11 / 3600.) * T
-					  + details::deg2rad(1.080 / 3600.) * std::pow(T, 2.);
+					  + details::deg2rad(129602768.11 / 3600.) * time
+					  + details::deg2rad(1.080 / 3600.) * std::pow(time, 2.);
 
   return hs_rad;
 }
 
-floating_t
-  longman::longitude_of_moons_ascending_node(floating_t T) noexcept { // N_rad
+floating_t longman::longitude_of_moons_ascending_node(
+  floating_t time) noexcept { // N_rad
   // const auto N_rad = details::dms2rad(259., 10., 57.12) -
-  // details::deg2rad((5. * rev_sec + 482912.63) / 3600.)*T +
-  // details::deg2rad(7.58 / 3600.)*std::pow(T, 2.) + details::deg2rad(0.008 /
-  // 3600.)*std::pow(T, 3.);
+  // details::deg2rad((5. * rev_sec + 482912.63) / 3600.)*time +
+  // details::deg2rad(7.58 / 3600.)*std::pow(time, 2.) + details::deg2rad(0.008
+  // / 3600.)*std::pow(time, 3.);
 
-  const auto N_rad = details::dms2rad(259., 10., 59.81)
-					 - details::deg2rad((5. * rev_sec + 482911.24) / 3600.) * T
-					 + details::deg2rad(7.48 / 3600.) * std::pow(T, 2.)
-					 + details::deg2rad(0.007 / 3600.) * std::pow(T, 3.);
+  const auto N_rad =
+	details::dms2rad(259., 10., 59.81)
+	- details::deg2rad((5. * rev_sec + 482911.24) / 3600.) * time
+	+ details::deg2rad(7.48 / 3600.) * std::pow(time, 2.)
+	+ details::deg2rad(0.007 / 3600.) * std::pow(time, 3.);
   return N_rad;
 }
 
 floating_t
-  longman::mean_longitude_solar_perigee(floating_t T) noexcept { // ps_rad
+  longman::mean_longitude_solar_perigee(floating_t time) noexcept { // ps_rad
   // const auto ps_rad = details::dms2rad(281., 13., 15.00) +
-  // details::deg2rad(6189.03 / 3600.)*T + details::deg2rad(1.63 /
-  // 3600.)*std::pow(T, 2.) + details::deg2rad(0.012 / 3600.)*
-  // std::pow(T, 3.);
+  // details::deg2rad(6189.03 / 3600.)*time + details::deg2rad(1.63 /
+  // 3600.)*std::pow(time, 2.) + details::deg2rad(0.012 / 3600.)*
+  // std::pow(time, 3.);
 
   const auto ps_rad = details::dms2rad(281., 13., 14.99)
-					  + details::deg2rad(6188.47 / 3600.) * T
-					  + details::deg2rad(1.62 / 3600.) * std::pow(T, 2.)
-					  + details::deg2rad(0.011 / 3600.) * std::pow(T, 3.);
+					  + details::deg2rad(6188.47 / 3600.) * time
+					  + details::deg2rad(1.62 / 3600.) * std::pow(time, 2.)
+					  + details::deg2rad(0.011 / 3600.) * std::pow(time, 3.);
 
   return ps_rad;
 }
 
-floating_t longman::eccentricity_of_earths_orbit(floating_t T) noexcept { // es
-  return 0.01675104 - 0.00004180 * T - 0.000000126 * std::pow(T, 2.);
+floating_t
+  longman::eccentricity_of_earths_orbit(floating_t time) noexcept { // es
+  return 0.01675104 - 0.00004180 * time - 0.000000126 * std::pow(time, 2.);
 }
 
 floating_t longman::distance_parameter(

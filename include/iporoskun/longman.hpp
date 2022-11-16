@@ -113,16 +113,6 @@ public:
   longman() = default;
   explicit longman(
 	const longman_parameter::position_t& pos_of_msrmnt, duration_t utc_offset) {
-	set_parameter(pos_of_msrmnt, utc_offset);
-  }
-
-  explicit longman(const longman_parameter& parameter) {
-	set_parameter(parameter.position, parameter.utc_offset);
-  }
-
-  void set_parameter(
-	const longman_parameter::position_t& pos_of_msrmnt,
-	duration_t utc_offset) noexcept {
 	utc_offset_ = utc_offset;
 	pos_rad_cm = longman_parameter::position_t{
 	  latitude{ details::deg2rad(pos_of_msrmnt.latitude) },
@@ -130,6 +120,9 @@ public:
 	  height{ pos_of_msrmnt.height * 100. }
 	};
   }
+
+  explicit longman(const longman_parameter& parameter)
+	: longman(parameter.position, parameter.utc_offset) {}
 
   template<class TimePoint>
   [[nodiscard]] auto operator()(const TimePoint& local_time_of_msrmnt) noexcept

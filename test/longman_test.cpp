@@ -9,10 +9,10 @@ using namespace std::chrono;
 using namespace std::chrono_literals;
 
 namespace longman = iporoskun::longman;
-using position_t = longman::longman_parameter::position_t;
 
-auto pos = position_t{ longman::latitude(52.29610),
-					   longman::longitude(10.45900), longman::height(80) };
+auto pos =
+  longman::position{ longman::latitude(52.29610), longman::longitude(10.45900),
+					 longman::height(80) };
 
 
 TEST_CASE("angle transformations") {
@@ -99,8 +99,8 @@ TEST_CASE("comparision with matlab results") {
   const auto time = day + 6h + 10min + 0s;
   const double T = longman::details::julian_centuries_from_reference_date(time);
   const auto position =
-	position_t{ longman::latitude(-22.733), longman::longitude(-90.50),
-				longman::height(0) };
+	longman::position{ longman::latitude(-22.733), longman::longitude(-90.50),
+					   longman::height(0) };
   longman::longman longman(position);
 
   const auto EPS = 1e-14;

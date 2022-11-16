@@ -145,8 +145,8 @@ auto longman::calculate_acceleration(const time_point& utc_time)
 }
 
 
-floating_t longman::distance_to_earth_centre(
-  const longman_parameter::position_t& pos_rad_cm) noexcept { // r
+floating_t
+  longman::distance_to_earth_centre(const position& pos_rad_cm) noexcept { // r
   const auto C_2 =
 	1. / (1. + constants::e_crt_2 * pow(sin(pos_rad_cm.latitude.get()), 2.));
   const auto C = sqrt(C_2);

@@ -113,12 +113,10 @@ floating_t longitude_of_moons_ascending_node(floating_t time) noexcept;
 floating_t mean_longitude_solar_perigee(floating_t time) noexcept;
 floating_t eccentricity_of_earths_orbit(floating_t time) noexcept;
 
-inline longman_parameter::position_t
-  position_from_deg_meter_to_rad_cm(longman_parameter::position_t const& pos) {
-  return longman_parameter::position_t{
-	latitude{ details::deg_to_rad(pos.latitude) },
-	longitude{ details::deg_to_rad(pos.longitude) }, height{ pos.height * 100. }
-  };
+inline position position_from_deg_meter_to_rad_cm(position const& pos) {
+  return position{ latitude{ details::deg_to_rad(pos.latitude) },
+				   longitude{ details::deg_to_rad(pos.longitude) },
+				   height{ pos.height * 100. } };
 }
 } // namespace details
 
@@ -127,19 +125,16 @@ class longman {
   using time_point = std::chrono::system_clock::time_point;
 
 public:
-  longman(longman_parameter::position_t const& measurement_position) {
+  explicit longman(const position& measurement_position) {
 	pos_rad_cm =
 	  details::position_from_deg_meter_to_rad_cm(measurement_position);
   }
 
-  explicit longman(const longman_parameter& parameter)
-	: longman(parameter.position) {}
-
   [[nodiscard]] auto operator()(const time_point& utc_time) noexcept
 	-> floating_t /*meters_per_second_squared_t*/;
 
-  static floating_t distance_to_earth_centre(
-	const longman_parameter::position_t& pos_rad_cm) noexcept;
+  static floating_t
+	distance_to_earth_centre(const position& pos_rad_cm) noexcept;
   floating_t distance_center_moon_earth() noexcept;
   floating_t distance_center_sun_earth() noexcept;
   floating_t inclination_of_moon() const;
@@ -151,7 +146,7 @@ private:
   auto calculate_acceleration(const time_point& utc_time) -> floating_t
 	/*-> meters_per_second_squared_t*/;
 
-  longman_parameter::position_t pos_rad_cm;
+  position pos_rad_cm;
 
   floating_t sm_rad;
   floating_t pm_rad;

@@ -15,13 +15,10 @@ using latitude = details::named_type<floating_t, struct latitude_tag>;
 using longitude = details::named_type<floating_t, struct longitude_tag>;
 using height = details::named_type<floating_t, struct height_tag>;
 
-struct longman_parameter {
-  struct position_t {
-	latitude latitude; /* deg */
-	longitude longitude; /* deg */
-	height height; /* msl_orthometric_height, meter and also cm*/
-  } position;
-  duration_t utc_offset;
+struct position {
+  latitude latitude; /* deg */
+  longitude longitude; /* deg */
+  height height; /* msl_orthometric_height, meter and also cm*/
 };
 
 } // namespace iporoskun::longman

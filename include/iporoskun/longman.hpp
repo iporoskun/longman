@@ -135,11 +135,10 @@ public:
   explicit longman(const longman_parameter& parameter)
 	: longman(parameter.position) {}
 
-  [[nodiscard]] auto operator()(const time_point& local_time_of_msrmnt) noexcept
+  [[nodiscard]] auto operator()(const time_point& utc_time) noexcept
 	-> floating_t /*meters_per_second_squared_t*/;
 
-
-  static floating_t distance_parameter(
+  static floating_t distance_to_earth_centre(
 	const longman_parameter::position_t& pos_rad_cm) noexcept;
   floating_t distance_center_moon_earth() noexcept;
   floating_t distance_center_sun_earth() noexcept;
@@ -149,10 +148,8 @@ public:
 private:
   void calc_longitude_and_eccentricity(floating_t time) noexcept;
 
-  auto calculate_acceleration() -> floating_t
+  auto calculate_acceleration(const time_point& utc_time) -> floating_t
 	/*-> meters_per_second_squared_t*/;
-
-  time_point utc_time_;
 
   longman_parameter::position_t pos_rad_cm;
 
@@ -176,23 +173,21 @@ private:
 						// observations reckoned from the vernal equinox
 };
 
-// template<class TimePoint>
 inline auto longman::operator()(const time_point& utc_time) noexcept
   -> floating_t /*meters_per_second_squared_t*/
 {
   using namespace std::chrono;
-  utc_time_ = utc_time;
   const auto time =
 	details::julian_centuries_from_reference_date(floor<seconds>(utc_time));
 
   calc_longitude_and_eccentricity(time);
-  r = distance_parameter(pos_rad_cm);
+  r = distance_to_earth_centre(pos_rad_cm);
   d = distance_center_moon_earth();
   D = distance_center_sun_earth();
   Im_rad = inclination_of_moon();
   nu = longitude_celestial_equator();
 
-  return calculate_acceleration();
+  return calculate_acceleration(utc_time);
 }
 
 } // namespace iporoskun::longman

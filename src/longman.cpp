@@ -91,12 +91,12 @@ void longman::calc_longitude_and_eccentricity(floating_t time) noexcept {
   es = details::eccentricity_of_earths_orbit(time);
 }
 
-auto longman::calculate_acceleration()
+auto longman::calculate_acceleration(const time_point& utc_time)
   -> floating_t /* meters_per_second_squared_t*/
 {
   using namespace constants;
   using fhours_t = std::chrono::duration<floating_t, std::ratio<3600>>;
-  const auto t0 = details::from_midnight<fhours_t>(utc_time_).count();
+  const auto t0 = details::from_midnight<fhours_t>(utc_time).count();
   const auto t_rad = details::deg_to_rad(
 	15. * (t0 - 12.) + details::rad2deg(pos_rad_cm.longitude));
 
@@ -145,7 +145,7 @@ auto longman::calculate_acceleration()
 }
 
 
-floating_t longman::distance_parameter(
+floating_t longman::distance_to_earth_centre(
   const longman_parameter::position_t& pos_rad_cm) noexcept { // r
   const auto C_2 =
 	1. / (1. + constants::e_crt_2 * pow(sin(pos_rad_cm.latitude.get()), 2.));

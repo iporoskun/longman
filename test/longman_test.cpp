@@ -147,7 +147,9 @@ TEST_CASE("comparision with matlab results") {
   SECTION("distances in cm") {
 	const auto rad_cm_param =
 	  longman::details::position_from_deg_meter_to_rad_cm(position);
-	CHECK(longman.distance_parameter(rad_cm_param) == (6.375063476365359e+08));
+	CHECK(
+	  longman.distance_to_earth_centre(rad_cm_param)
+	  == (6.375063476365359e+08));
 
 	CHECK(
 	  longman.distance_center_moon_earth()

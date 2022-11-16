@@ -15,7 +15,7 @@ namespace details {
 
 using namespace std::numbers;
 
-template<class T, std::enable_if_t<std::is_arithmetic_v<T>>...>
+template<std::floating_point T>
 inline constexpr auto abs(T const& x) noexcept {
   return x < 0 ? -x : x;
 }
@@ -51,7 +51,7 @@ inline auto from_midnight(std::chrono::system_clock::time_point tp) noexcept {
   return std::chrono::floor<Duration>(time.to_duration());
 }
 
-inline floating_t centuries_from_ref_date(
+inline floating_t julian_centuries_from_ref_date(
   std::chrono::system_clock::time_point tp,
   std::chrono::system_clock::time_point ref_date = {
 	std::chrono::sys_days{ std::chrono::year{ 1899 } / 12
@@ -63,22 +63,20 @@ inline floating_t centuries_from_ref_date(
 
   const auto dp = floor<days>(tp);
   const auto diff_days = sys_days{ dp } - ref_date;
+  const auto time_diff = from_midnight<seconds>(tp);
+  const auto total_diff = floor<seconds>(diff_days) + time_diff;
 
-  const auto time = from_midnight<seconds>(tp);
+  constexpr static auto number_of_seconds_in_julian_century =
+	static_cast<floating_t>(3155760000); /*100*365.25*24*60*60*/
 
-  const auto diff = floor<seconds>(diff_days) + time;
-
-  constexpr static auto amount_of_seconds_in_julian_century =
-	100. * 365.25 * 24. * 60. * 60.;
-
-  return static_cast<floating_t>(diff.count())
-		 / static_cast<floating_t>(amount_of_seconds_in_julian_century);
+  return static_cast<floating_t>(total_diff.count())
+		 / number_of_seconds_in_julian_century;
 }
 
 } // namespace details
 
-inline constexpr floating_t
-  dms2deg(floating_t deg, floating_t min = 0., floating_t sec = 0.) noexcept {
+inline constexpr floating_t degree_minute_second_to_degree(
+  floating_t deg, floating_t min, floating_t sec) noexcept {
   return details::dms2rad(deg, min, sec) * 180.
 		 / std::numbers::pi_v<floating_t>;
 }
@@ -86,26 +84,27 @@ inline constexpr floating_t
 // Advances in Geophysical Methods Applied to Forensic Investigations
 // https://books.google.de/books?id=NU7iDwAAQBAJ&pg=PA141&lpg=PA141&dq=Loveh2%3D0.612;+Lovek2%3D0.303;+beta%3D1%2BLoveh2-3/2*Lovek2&source=bl&ots=ZZV4OSN9e1&sig=ACfU3U1ffqTuzBzJKl4HM4VvwXFmc5Y8kA&hl=de&sa=X&ved=2ahUKEwj818LDvLftAhUi2uAKHSFOBlAQ6AEwAHoECAEQAg#v=onepage&q=Loveh2%3D0.612%3B%20Lovek2%3D0.303%3B%20beta%3D1%2BLoveh2-3%2F2*Lovek2&f=false
 
+
 class longman {
-  constexpr static auto a = 6.378270e8;
-  constexpr static auto e_crt_2 = 0.006738;
+  constexpr static floating_t a = 6.378270e8;
+  constexpr static floating_t e_crt_2 = 0.006738;
 
-  constexpr static auto G = 6.674e-8;
-  constexpr static auto M_m = 7.3537e25;
-  constexpr static auto M_s = 1.993e33;
+  constexpr static floating_t G = 6.674e-8;
+  constexpr static floating_t M_m = 7.3537e25;
+  constexpr static floating_t M_s = 1.993e33;
 
-  constexpr static auto m_s2m = 0.074804;
-  constexpr static auto e_m = 0.05490;
-  constexpr static auto c_m = 3.84402e10;
-  constexpr static auto c_s = 1.495e13;
-  constexpr static auto omega = details::dms2rad(23., 26., 21.48);
-  constexpr static auto i = details::deg2rad(5.145);
+  constexpr static floating_t m_s2m = 0.074804;
+  constexpr static floating_t e_m = 0.05490;
+  constexpr static floating_t c_m = 3.84402e10;
+  constexpr static floating_t c_s = 1.495e13;
+  constexpr static floating_t omega = details::dms2rad(23., 26., 21.48);
+  constexpr static floating_t i = details::deg2rad(5.145);
 
-  constexpr static auto love_h2 = 0.612;
-  constexpr static auto love_k2 = 0.303;
-  constexpr static auto beta = 1. + love_h2 - 3. / 2. * love_k2;
+  constexpr static floating_t love_h2 = 0.612;
+  constexpr static floating_t love_k2 = 0.303;
+  constexpr static floating_t beta = 1. + love_h2 - 3. / 2. * love_k2;
 
-  constexpr static auto rev_sec = 360. * 3600.;
+  constexpr static floating_t rev_sec = 360. * 3600.;
 
   using time_point = std::chrono::sys_time<duration_t>;
 
@@ -120,7 +119,6 @@ class longman {
   floating_t ps_rad;
   floating_t es;
 
-  // longman_parameter::position_t pos_deg_m;
   longman_parameter::position_t pos_rad_cm;
 
   floating_t
@@ -194,8 +192,8 @@ inline auto longman::operator()(const TimePoint& local_time_of_msrmnt) noexcept
   using namespace std::chrono;
 
   set_time<TimePoint>(local_time_of_msrmnt);
-  const auto T =
-	details::centuries_from_ref_date(floor<seconds>(local_time_of_msrmnt));
+  const auto T = details::julian_centuries_from_ref_date(
+	floor<seconds>(local_time_of_msrmnt));
 
   calc_longitude_and_eccentricity(T);
   r = distance_parameter(pos_rad_cm);

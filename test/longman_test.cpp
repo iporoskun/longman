@@ -31,32 +31,36 @@ TEST_CASE("angle transformations") {
   }
 
   SECTION("megree-min-sec to deg") {
-	CHECK(longman::dms2deg(22, 44, 0) == Approx(22.7333333333));
+	CHECK(
+	  longman::degree_minute_second_to_degree(22, 44, 0)
+	  == Approx(22.7333333333));
   }
 }
 
 
 TEST_CASE("amount of centureis from ref-date") {
-  using longman::details::centuries_from_ref_date;
+  using longman::details::julian_centuries_from_ref_date;
 
   SECTION("dates are same ") {
-	CHECK(centuries_from_ref_date(sys_days{ 1899y / 12 / 31d } + 12h) == 0.);
+	CHECK(
+	  julian_centuries_from_ref_date(sys_days{ 1899y / 12 / 31d } + 12h) == 0.);
   }
 
   SECTION("1 century") {
 	// https://www.wolframalpha.com/input/?i=31+december+1899+%2B+%28100+*+365.25+days%29+
-	CHECK(centuries_from_ref_date(sys_days{ 2000y / 1 / 1d } + 12h) == 1.);
+	CHECK(
+	  julian_centuries_from_ref_date(sys_days{ 2000y / 1 / 1d } + 12h) == 1.);
   }
 
   SECTION("matlab result 1") {
 	CHECK(
-	  centuries_from_ref_date(sys_days{ 2010y / 10 / 31d })
+	  julian_centuries_from_ref_date(sys_days{ 2010y / 10 / 31d })
 	  == Approx(1.108302722640506));
   }
 
   SECTION("matlab result 2") {
 	CHECK(
-	  centuries_from_ref_date(sys_days{ 2020y / 12 / 7d })
+	  julian_centuries_from_ref_date(sys_days{ 2020y / 12 / 7d })
 	  == Approx(1.209329416685681));
   }
 }
@@ -91,7 +95,7 @@ TEST_CASE("comparision with matlab results") {
   // Longman(-22.733,-90.50,0,31,12,1899,0,10,6,0,31,10,2010);
   const auto day = sys_days{ (year_month_day{ 2010y / 10 / 31d }) };
   const auto time = day + 6h + 10min + 0s;
-  const double T = longman::details::centuries_from_ref_date(time);
+  const double T = longman::details::julian_centuries_from_ref_date(time);
   const auto position =
 	position_t{ longman::latitude(-22.733), longman::longitude(-90.50),
 				longman::height(0) };

@@ -86,53 +86,6 @@ inline constexpr floating_t degree_minute_second_to_degree(
 
 
 class longman {
-  constexpr static floating_t a = 6.378270e8;
-  constexpr static floating_t e_crt_2 = 0.006738;
-
-  constexpr static floating_t G = 6.674e-8;
-  constexpr static floating_t M_m = 7.3537e25;
-  constexpr static floating_t M_s = 1.993e33;
-
-  constexpr static floating_t m_s2m = 0.074804;
-  constexpr static floating_t e_m = 0.05490;
-  constexpr static floating_t c_m = 3.84402e10;
-  constexpr static floating_t c_s = 1.495e13;
-  constexpr static floating_t omega = details::dms2rad(23., 26., 21.48);
-  constexpr static floating_t i = details::deg2rad(5.145);
-
-  constexpr static floating_t love_h2 = 0.612;
-  constexpr static floating_t love_k2 = 0.303;
-  constexpr static floating_t beta = 1. + love_h2 - 3. / 2. * love_k2;
-
-  constexpr static floating_t rev_sec = 360. * 3600.;
-
-  using time_point = std::chrono::sys_time<duration_t>;
-
-  time_point local_time_;
-  time_point utc_time_;
-  duration_t utc_offset_;
-
-  floating_t sm_rad;
-  floating_t pm_rad;
-  floating_t hs_rad;
-  floating_t N_rad;
-  floating_t ps_rad;
-  floating_t es;
-
-  longman_parameter::position_t pos_rad_cm;
-
-  floating_t
-	r; // [cm] distance from observation point to the center of the Earth
-  floating_t d; // distance from Moon to the Earth's geocenter
-  floating_t D; // distance from Sun to the Earth's geocenter
-  floating_t Im_rad; // Inclination of the Moon's orbit to the equator
-  floating_t nu; // Longitude in the celestial equator of its
-				 // intersection A with the Moon's orbit
-  floating_t chi_m_rad; // right ascension of meridian of place of
-						// observations reckoned from A
-  floating_t chi_s_rad; // right ascension of meridian of place of
-						// observations reckoned from the vernal equinox
-
 public:
   longman() = default;
   explicit longman(
@@ -183,6 +136,52 @@ private:
 
   auto calculate_acceleration() -> floating_t
 	/*-> meters_per_second_squared_t*/;
+
+  constexpr static floating_t a = 6.378270e8;
+  constexpr static floating_t e_crt_2 = 0.006738;
+
+  constexpr static floating_t G = 6.674e-8;
+  constexpr static floating_t M_m = 7.3537e25;
+  constexpr static floating_t M_s = 1.993e33;
+
+  constexpr static floating_t m_s2m = 0.074804;
+  constexpr static floating_t e_m = 0.05490;
+  constexpr static floating_t c_m = 3.84402e10;
+  constexpr static floating_t c_s = 1.495e13;
+  constexpr static floating_t omega = details::dms2rad(23., 26., 21.48);
+  constexpr static floating_t i = details::deg2rad(5.145);
+
+  constexpr static floating_t love_h2 = 0.612;
+  constexpr static floating_t love_k2 = 0.303;
+  constexpr static floating_t beta = 1. + love_h2 - 3. / 2. * love_k2;
+
+  constexpr static floating_t rev_sec = 360. * 3600.;
+
+  using time_point = std::chrono::sys_time<duration_t>;
+  time_point local_time_;
+  time_point utc_time_;
+  duration_t utc_offset_;
+
+  floating_t sm_rad;
+  floating_t pm_rad;
+  floating_t hs_rad;
+  floating_t N_rad;
+  floating_t ps_rad;
+  floating_t es;
+
+  longman_parameter::position_t pos_rad_cm;
+
+  floating_t
+	r; // [cm] distance from observation point to the center of the Earth
+  floating_t d; // distance from Moon to the Earth's geocenter
+  floating_t D; // distance from Sun to the Earth's geocenter
+  floating_t Im_rad; // Inclination of the Moon's orbit to the equator
+  floating_t nu; // Longitude in the celestial equator of its
+				 // intersection A with the Moon's orbit
+  floating_t chi_m_rad; // right ascension of meridian of place of
+						// observations reckoned from A
+  floating_t chi_s_rad; // right ascension of meridian of place of
+						// observations reckoned from the vernal equinox
 };
 
 template<class TimePoint>
@@ -192,10 +191,10 @@ inline auto longman::operator()(const TimePoint& local_time_of_msrmnt) noexcept
   using namespace std::chrono;
 
   set_time<TimePoint>(local_time_of_msrmnt);
-  const auto T = details::julian_centuries_from_ref_date(
+  const auto time = details::julian_centuries_from_ref_date(
 	floor<seconds>(local_time_of_msrmnt));
 
-  calc_longitude_and_eccentricity(T);
+  calc_longitude_and_eccentricity(time);
   r = distance_parameter(pos_rad_cm);
   d = distance_center_moon_earth();
   D = distance_center_sun_earth();

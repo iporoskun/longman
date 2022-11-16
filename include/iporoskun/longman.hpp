@@ -81,30 +81,6 @@ inline constexpr floating_t degree_minute_second_to_degree(
 		 / std::numbers::pi_v<floating_t>;
 }
 
-namespace constants {
-// Advances in Geophysical Methods Applied to Forensic Investigations
-// https://shorturl.at/azJ49
-inline constexpr floating_t a = 6.378270e8;
-inline constexpr floating_t e_crt_2 = 0.006738;
-
-inline constexpr floating_t G = 6.674e-8;
-inline constexpr floating_t M_m = 7.3537e25;
-inline constexpr floating_t M_s = 1.993e33;
-
-inline constexpr floating_t m_s2m = 0.074804;
-inline constexpr floating_t e_m = 0.05490;
-inline constexpr floating_t c_m = 3.84402e10;
-inline constexpr floating_t c_s = 1.495e13;
-inline constexpr floating_t omega = details::dms_to_rad(23., 26., 21.48);
-inline constexpr floating_t i = details::deg_to_rad(5.145);
-
-inline constexpr floating_t love_h2 = 0.612;
-inline constexpr floating_t love_k2 = 0.303;
-inline constexpr floating_t beta = 1. + love_h2 - 3. / 2. * love_k2;
-
-inline constexpr floating_t rev_sec = 360. * 3600.;
-} // namespace constants
-
 namespace details {
 floating_t mean_longitude_moon(floating_t time) noexcept;
 floating_t mean_longitude_lunar_perigee(floating_t time) noexcept;

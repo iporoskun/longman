@@ -3,6 +3,30 @@
 
 namespace iporoskun::longman {
 
+namespace constants {
+// Advances in Geophysical Methods Applied to Forensic Investigations
+// https://shorturl.at/azJ49
+constexpr floating_t a = 6.378270e8;
+constexpr floating_t e_crt_2 = 0.006738;
+
+constexpr floating_t G = 6.674e-8;
+constexpr floating_t M_m = 7.3537e25;
+constexpr floating_t M_s = 1.993e33;
+
+constexpr floating_t m_s2m = 0.074804;
+constexpr floating_t e_m = 0.05490;
+constexpr floating_t c_m = 3.84402e10;
+constexpr floating_t c_s = 1.495e13;
+constexpr floating_t omega = details::dms_to_rad(23., 26., 21.48);
+constexpr floating_t i = details::deg_to_rad(5.145);
+
+constexpr floating_t love_h2 = 0.612;
+constexpr floating_t love_k2 = 0.303;
+constexpr floating_t beta = 1. + love_h2 - 3. / 2. * love_k2;
+
+constexpr floating_t rev_sec = 360. * 3600.;
+} // namespace constants
+
 floating_t details::mean_longitude_moon(floating_t time) noexcept { // sm_rad
   // const auto sm_rad = details::dms_to_rad(270., 26., 14.72) +
   // details::deg_to_rad((1336. * rev_sec + 1108411.20) / 3600.)*time +

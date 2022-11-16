@@ -13,6 +13,7 @@ Following sources can be referred for further details on Longman equations:
 
 * [This publication](https://sbgf.org.br/revista/index.php/rbgf/article/viewFile/793/416) was used as a reference for mathematical details and parameters of the implementation.
 * The source code is the C++ port of original MATLAB implementation by Olga Bjelotomic Orsulic and Matej Varga      
+* Constants from [Advances in Geophysical Methods Applied to Forensic Investigations](https://shorturl.at/azJ49)
 
 
 ## Used libraries

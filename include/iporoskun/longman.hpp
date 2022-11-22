@@ -156,8 +156,7 @@ public:
   [[nodiscard]] auto operator()(const time_point_t& utc_time) noexcept
 	-> floating_t /*meters_per_second_squared_t*/;
 
-  static floating_t
-	distance_to_earth_centre(const position_t& pos_rad_cm) noexcept;
+  floating_t distance_to_earth_centre(const position_t& pos_rad_cm) noexcept;
   floating_t distance_center_moon_earth() const noexcept;
   floating_t distance_center_sun_earth() const noexcept;
   floating_t inclination_of_moon() const;

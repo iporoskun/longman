@@ -185,8 +185,8 @@ TEST_CASE("comparision with matlab results") {
 
 using duration_types = std::tuple<
   std::chrono::nanoseconds, std::chrono::microseconds,
-  std::chrono::milliseconds, std::chrono::seconds, std::chrono::minutes,
-  std::chrono::hours>;
+  std::chrono::milliseconds, std::chrono::seconds, std::chrono::minutes
+  /*, std::chrono::hours*/>;
 using floating_types = std::tuple<float, double, long double>;
 TEMPLATE_LIST_TEST_CASE(
   "using different duration types", "[]",

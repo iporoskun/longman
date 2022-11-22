@@ -8,9 +8,9 @@ using namespace std::chrono_literals;
 
 namespace longman = iporoskun::longman;
 
-auto pos =
-  longman::position{ longman::latitude<>(52.29610),
-					 longman::longitude<>(10.45900), longman::height<>(80) };
+auto pos = longman::position{ longman::latitude_t<>(52.29610),
+							  longman::longitude_t<>(10.45900),
+							  longman::height_t<>(80) };
 
 
 TEST_CASE("angle transformations") {
@@ -102,8 +102,8 @@ TEST_CASE("comparision with matlab results") {
   const double T =
 	longman::detail::julian_centuries_from_reference_date<double>(time);
   const auto position =
-	longman::position{ longman::latitude<>(-22.733),
-					   longman::longitude<>(-90.50), longman::height<>(0) };
+	longman::position{ longman::latitude_t<>(-22.733),
+					   longman::longitude_t<>(-90.50), longman::height_t<>(0) };
   longman::detail::longman_impl longman(position);
 
   const auto EPS = 1e-14;
@@ -197,9 +197,9 @@ TEMPLATE_LIST_TEST_CASE(
 
   using floating_t = long double;
   const auto position =
-	longman::position<floating_t>{ longman::latitude<floating_t>(-22.733),
-								   longman::longitude<floating_t>(-90.50),
-								   longman::height<floating_t>(0) };
+	longman::position<floating_t>{ longman::latitude_t<floating_t>(-22.733),
+								   longman::longitude_t<floating_t>(-90.50),
+								   longman::height_t<floating_t>(0) };
 
   const auto accel =
 	::iporoskun::longman::longman<floating_t, TestType>(position, time);

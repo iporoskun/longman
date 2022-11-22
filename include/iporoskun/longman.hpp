@@ -38,17 +38,17 @@ struct height_tag;
 } // namespace detail
 
 template<std::floating_point FloatingType = double>
-using latitude = detail::named_type<FloatingType, detail::latitude_tag>;
+using latitude_t = detail::named_type<FloatingType, detail::latitude_tag>;
 template<std::floating_point FloatingType = double>
-using longitude = detail::named_type<FloatingType, detail::longitude_tag>;
+using longitude_t = detail::named_type<FloatingType, detail::longitude_tag>;
 template<std::floating_point FloatingType = double>
-using height = detail::named_type<FloatingType, detail::height_tag>;
+using height_t = detail::named_type<FloatingType, detail::height_tag>;
 
 template<std::floating_point FloatingType = double>
 struct position {
-  latitude<FloatingType> latitude; /* deg */
-  longitude<FloatingType> longitude; /* deg */
-  height<FloatingType> height; /* msl_orthometric_height, meter and also cm*/
+  latitude_t<FloatingType> latitude; /* deg */
+  longitude_t<FloatingType> longitude; /* deg */
+  height_t<FloatingType> height; /* msl_orthometric_height, meter and also cm*/
 };
 
 namespace detail {
@@ -127,9 +127,10 @@ template<std::floating_point FloatingType>
 inline auto position_from_deg_meter_to_rad_cm(position<FloatingType> const& pos)
   -> position<FloatingType> {
   return position<FloatingType>{
-	latitude<FloatingType>{ detail::deg_to_rad<FloatingType>(pos.latitude) },
-	longitude<FloatingType>{ detail::deg_to_rad<FloatingType>(pos.longitude) },
-	height<FloatingType>{ pos.height * 100. }
+	latitude_t<FloatingType>{ detail::deg_to_rad<FloatingType>(pos.latitude) },
+	longitude_t<FloatingType>{
+	  detail::deg_to_rad<FloatingType>(pos.longitude) },
+	height_t<FloatingType>{ pos.height * 100. }
   };
 }
 

@@ -158,6 +158,9 @@ endif()
 find_package(benchmark)
 add_subdirectory(benchmark)
 
+# Adding example applications
+add_subdirectory(app)
+
 # If MSVC is being used, and ASAN is enabled, we need to set the debugger environment
 # so that it behaves well with MSVC's debugger, and we can run the target from visual studio
 if(MSVC)

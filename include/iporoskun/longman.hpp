@@ -3,9 +3,52 @@
 #include <numbers>
 #include <concepts>
 
-#include "longman_parameter.hpp"
-
 namespace iporoskun::longman {
+
+namespace detail {
+// Implementation from
+// https://www.fluentcpp.com/2016/12/08/strong-types-for-strong-interfaces/
+
+template<class T, class /*TagType*/>
+class named_type {
+public:
+  explicit named_type(T const& value) noexcept
+	: value_(value) {}
+  explicit named_type(T&& value) noexcept
+	: value_(std::move(value)) {}
+
+  named_type() noexcept = default;
+  named_type(const named_type&) noexcept = default;
+  named_type(named_type&&) noexcept = default;
+  named_type& operator=(named_type const&) noexcept = default;
+  named_type& operator=(named_type&&) noexcept = default;
+  operator T() const noexcept { return value_; };
+
+  T& get() noexcept { return value_; }
+  T const& get() const noexcept { return value_; }
+
+private:
+  T value_;
+};
+
+struct latitude_tag;
+struct longitude_tag;
+struct height_tag;
+} // namespace detail
+
+template<std::floating_point FloatingType = double>
+using latitude = detail::named_type<FloatingType, detail::latitude_tag>;
+template<std::floating_point FloatingType = double>
+using longitude = detail::named_type<FloatingType, detail::longitude_tag>;
+template<std::floating_point FloatingType = double>
+using height = detail::named_type<FloatingType, detail::height_tag>;
+
+template<std::floating_point FloatingType = double>
+struct position {
+  latitude<FloatingType> latitude; /* deg */
+  longitude<FloatingType> longitude; /* deg */
+  height<FloatingType> height; /* msl_orthometric_height, meter and also cm*/
+};
 
 namespace detail {
 

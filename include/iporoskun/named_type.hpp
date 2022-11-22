@@ -1,6 +1,6 @@
 #pragma once
 
-namespace iporoskun::longman::details {
+namespace iporoskun::longman::detail {
 
 // Implementation from
 // https://www.fluentcpp.com/2016/12/08/strong-types-for-strong-interfaces/
@@ -27,4 +27,4 @@ private:
   T value_;
 };
 
-} // namespace iporoskun::longman::details
+} // namespace iporoskun::longman::detail

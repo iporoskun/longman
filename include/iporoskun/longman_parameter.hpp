@@ -13,9 +13,15 @@ namespace iporoskun::longman {
 using floating_t = IPOROSKUN_LONGMAN_UNDERLYING_FLOATING_TYPE;
 using duration_t = std::chrono::seconds;
 
-using latitude = details::named_type<floating_t, struct latitude_tag>;
-using longitude = details::named_type<floating_t, struct longitude_tag>;
-using height = details::named_type<floating_t, struct height_tag>;
+namespace detail {
+struct latitude_tag;
+struct longitude_tag;
+struct height_tag;
+} // namespace detail
+
+using latitude = detail::named_type<floating_t, detail::latitude_tag>;
+using longitude = detail::named_type<floating_t, detail::longitude_tag>;
+using height = detail::named_type<floating_t, detail::height_tag>;
 
 struct position {
   latitude latitude; /* deg */

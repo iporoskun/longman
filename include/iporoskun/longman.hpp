@@ -6,7 +6,7 @@
 
 namespace iporoskun::longman {
 
-namespace details {
+namespace detail {
 
 using namespace std::numbers;
 
@@ -18,7 +18,7 @@ inline constexpr auto abs(T const& x) noexcept {
 inline constexpr floating_t dms_to_rad(
   floating_t deg, floating_t min = 0., floating_t sec = 0.) noexcept {
   const floating_t angles_deg =
-	details::abs(deg) + details::abs(min) / 60. + details::abs(sec) / 3600.;
+	detail::abs(deg) + detail::abs(min) / 60. + detail::abs(sec) / 3600.;
   if (deg < 0. || min < 0. || sec < 0.) {
 	return -angles_deg * pi_v<floating_t> / static_cast<floating_t>(180);
   } else {
@@ -68,15 +68,15 @@ inline floating_t julian_centuries_from_reference_date(
 		 / number_of_seconds_in_julian_century;
 }
 
-} // namespace details
+} // namespace detail
 
 inline constexpr floating_t degree_minute_second_to_degree(
   floating_t deg, floating_t min, floating_t sec) noexcept {
-  return details::dms_to_rad(deg, min, sec) * 180.
+  return detail::dms_to_rad(deg, min, sec) * 180.
 		 / std::numbers::pi_v<floating_t>;
 }
 
-namespace details {
+namespace detail {
 floating_t mean_longitude_moon(floating_t time) noexcept;
 floating_t mean_longitude_lunar_perigee(floating_t time) noexcept;
 floating_t mean_longitude_sun(floating_t time) noexcept;
@@ -85,11 +85,11 @@ floating_t mean_longitude_solar_perigee(floating_t time) noexcept;
 floating_t eccentricity_of_earths_orbit(floating_t time) noexcept;
 
 inline position position_from_deg_meter_to_rad_cm(position const& pos) {
-  return position{ latitude{ details::deg_to_rad(pos.latitude) },
-				   longitude{ details::deg_to_rad(pos.longitude) },
+  return position{ latitude{ detail::deg_to_rad(pos.latitude) },
+				   longitude{ detail::deg_to_rad(pos.longitude) },
 				   height{ pos.height * 100. } };
 }
-} // namespace details
+} // namespace detail
 
 
 class longman_impl {
@@ -97,7 +97,7 @@ class longman_impl {
 
 public:
   explicit longman_impl(const position& position) {
-	pos_rad_cm = details::position_from_deg_meter_to_rad_cm(position);
+	pos_rad_cm = detail::position_from_deg_meter_to_rad_cm(position);
   }
 
   [[nodiscard]] auto operator()(const time_point& utc_time) noexcept
@@ -137,7 +137,7 @@ inline auto longman_impl::operator()(const time_point& utc_time) noexcept
 {
   using namespace std::chrono;
   const auto time =
-	details::julian_centuries_from_reference_date(floor<seconds>(utc_time));
+	detail::julian_centuries_from_reference_date(floor<seconds>(utc_time));
 
   calc_longitude_and_eccentricity(time);
   r = distance_to_earth_centre(pos_rad_cm);

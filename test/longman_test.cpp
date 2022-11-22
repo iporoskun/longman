@@ -17,15 +17,15 @@ TEST_CASE("angle transformations") {
 
   SECTION("deg min sec to radians") {
 
-	constexpr auto positive = longman::details::dms_to_rad(270., 26., 11.72);
-	constexpr auto negative = longman::details::dms_to_rad(334., 19., 46.42);
+	constexpr auto positive = longman::detail::dms_to_rad(270., 26., 11.72);
+	constexpr auto negative = longman::detail::dms_to_rad(334., 19., 46.42);
 
 	CHECK(positive == Approx(4.720008893));
 	CHECK(negative == Approx(5.835151628));
   }
 
   SECTION("degree to rad") {
-	CHECK(longman::details::deg_to_rad(45) == Approx(0.785398163397));
+	CHECK(longman::detail::deg_to_rad(45) == Approx(0.785398163397));
   }
 
   SECTION("megree-min-sec to deg") {
@@ -37,7 +37,7 @@ TEST_CASE("angle transformations") {
 
 
 TEST_CASE("amount of centureis from ref-date") {
-  using longman::details::julian_centuries_from_reference_date;
+  using longman::detail::julian_centuries_from_reference_date;
 
   SECTION("dates are same ") {
 	CHECK(
@@ -69,7 +69,7 @@ TEST_CASE("time from midnight") {
   const auto time = sys_days{ (year_month_day{ 2010y / 9 / 30d }) };
   const auto T = time + 6h + 10min + 0s;
 
-  using longman::details::from_midnight;
+  using longman::detail::from_midnight;
   using fhours_t = std::chrono::duration<double, std::ratio<3600>>;
   CHECK(from_midnight<fhours_t>(time).count() == 0.);
   CHECK(from_midnight<fhours_t>(T).count() == Approx(6.166666666666667));
@@ -97,7 +97,7 @@ TEST_CASE("comparision with matlab results") {
   // Longman(-22.733,-90.50,0,31,12,1899,0,10,6,0,31,10,2010);
   const auto day = sys_days{ (year_month_day{ 2010y / 10 / 31d }) };
   const auto time = day + 6h + 10min + 0s;
-  const double T = longman::details::julian_centuries_from_reference_date(time);
+  const double T = longman::detail::julian_centuries_from_reference_date(time);
   const auto position =
 	longman::position{ longman::latitude(-22.733), longman::longitude(-90.50),
 					   longman::height(0) };
@@ -119,26 +119,26 @@ TEST_CASE("comparision with matlab results") {
 
 	SECTION("T from matlab") {
 	  const auto result = 9314.140709778332;
-	  CHECK(longman::details::mean_longitude_moon(T_matlab) == Approx(result));
+	  CHECK(longman::detail::mean_longitude_moon(T_matlab) == Approx(result));
 	}
 
 	CHECK(
-	  longman::details::mean_longitude_moon(T)
+	  longman::detail::mean_longitude_moon(T)
 	  == Approx(9314.140709778332).epsilon(EPS));
 	CHECK(
-	  longman::details::mean_longitude_lunar_perigee(T)
+	  longman::detail::mean_longitude_lunar_perigee(T)
 	  == Approx(84.544418585647875).epsilon(EPS));
 	CHECK(
-	  longman::details::mean_longitude_sun(T)
+	  longman::detail::mean_longitude_sun(T)
 	  == Approx(7.012636463119221e+02).epsilon(EPS));
 	CHECK(
-	  longman::details::longitude_of_moons_ascending_node(T)
+	  longman::detail::longitude_of_moons_ascending_node(T)
 	  == Approx(-32.889490944928838).epsilon(EPS));
 	CHECK(
-	  longman::details::mean_longitude_solar_perigee(T)
+	  longman::detail::mean_longitude_solar_perigee(T)
 	  == Approx(4.941491045285590).epsilon(EPS));
 	CHECK(
-	  longman::details::eccentricity_of_earths_orbit(T)
+	  longman::detail::eccentricity_of_earths_orbit(T)
 	  == Approx(0.016704558175993).epsilon(EPS));
   }
 
@@ -146,7 +146,7 @@ TEST_CASE("comparision with matlab results") {
 
   SECTION("distances in cm") {
 	const auto rad_cm_param =
-	  longman::details::position_from_deg_meter_to_rad_cm(position);
+	  longman::detail::position_from_deg_meter_to_rad_cm(position);
 	CHECK(
 	  longman.distance_to_earth_centre(rad_cm_param)
 	  == (6.375063476365359e+08));

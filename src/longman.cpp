@@ -17,8 +17,8 @@ constexpr floating_t m_s2m = 0.074804;
 constexpr floating_t e_m = 0.05490;
 constexpr floating_t c_m = 3.84402e10;
 constexpr floating_t c_s = 1.495e13;
-constexpr floating_t omega = details::dms_to_rad(23., 26., 21.48);
-constexpr floating_t i = details::deg_to_rad(5.145);
+constexpr floating_t omega = detail::dms_to_rad(23., 26., 21.48);
+constexpr floating_t i = detail::deg_to_rad(5.145);
 
 constexpr floating_t love_h2 = 0.612;
 constexpr floating_t love_k2 = 0.303;
@@ -27,101 +27,101 @@ constexpr floating_t beta = 1. + love_h2 - 3. / 2. * love_k2;
 constexpr floating_t rev_sec = 360. * 3600.;
 } // namespace constant
 
-floating_t details::mean_longitude_moon(floating_t time) noexcept { // sm_rad
-  // const auto sm_rad = details::dms_to_rad(270., 26., 14.72) +
-  // details::deg_to_rad((1336. * rev_sec + 1108411.20) / 3600.)*time +
-  // details::deg_to_rad(9.09 / 3600.)*std::pow(time, 2.) +
-  // details::deg_to_rad(0.0068 / 3600.)*std::pow(time, 3.);
+floating_t detail::mean_longitude_moon(floating_t time) noexcept { // sm_rad
+  // const auto sm_rad = detail::dms_to_rad(270., 26., 14.72) +
+  // detail::deg_to_rad((1336. * rev_sec + 1108411.20) / 3600.)*time +
+  // detail::deg_to_rad(9.09 / 3600.)*std::pow(time, 2.) +
+  // detail::deg_to_rad(0.0068 / 3600.)*std::pow(time, 3.);
 
   const auto sm_rad =
-	details::dms_to_rad(270., 26., 11.72)
-	+ details::deg_to_rad((1336. * constant::rev_sec + 1108406.05) / 3600.)
+	detail::dms_to_rad(270., 26., 11.72)
+	+ detail::deg_to_rad((1336. * constant::rev_sec + 1108406.05) / 3600.)
 		* time
-	+ details::deg_to_rad(7.128 / 3600.) * std::pow(time, 2.)
-	+ details::deg_to_rad(0.0072 / 3600.) * std::pow(time, 3.);
+	+ detail::deg_to_rad(7.128 / 3600.) * std::pow(time, 2.)
+	+ detail::deg_to_rad(0.0072 / 3600.) * std::pow(time, 3.);
 
   return sm_rad;
 }
 
 floating_t
-  details::mean_longitude_lunar_perigee(floating_t time) noexcept { // pm_rad
-  // const auto pm_rad = details::dms_to_rad(334., 19., 40.87) +
-  // details::deg_to_rad((11. *  constants::rev_sec + 392515.94) / 3600.)*time -
-  // details::deg_to_rad(37.24 / 3600.)*std::pow(time, 2.) -
-  // details::deg_to_rad(0.045 / 3600.)*std::pow(time, 3.);
+  detail::mean_longitude_lunar_perigee(floating_t time) noexcept { // pm_rad
+  // const auto pm_rad = detail::dms_to_rad(334., 19., 40.87) +
+  // detail::deg_to_rad((11. *  constants::rev_sec + 392515.94) / 3600.)*time -
+  // detail::deg_to_rad(37.24 / 3600.)*std::pow(time, 2.) -
+  // detail::deg_to_rad(0.045 / 3600.)*std::pow(time, 3.);
 
   const auto pm_rad =
-	details::dms_to_rad(334., 19., 46.42)
-	+ details::deg_to_rad((11. * constant::rev_sec + 392522.51) / 3600.) * time
-	- details::deg_to_rad(37.15 / 3600.) * std::pow(time, 2.)
-	- details::deg_to_rad(0.036 / 3600.) * std::pow(time, 3.);
+	detail::dms_to_rad(334., 19., 46.42)
+	+ detail::deg_to_rad((11. * constant::rev_sec + 392522.51) / 3600.) * time
+	- detail::deg_to_rad(37.15 / 3600.) * std::pow(time, 2.)
+	- detail::deg_to_rad(0.036 / 3600.) * std::pow(time, 3.);
 
   return pm_rad;
 }
 
-floating_t details::mean_longitude_sun(floating_t time) noexcept { // hs_rad
-  // const auto hs_rad = details::dms_to_rad(279., 41., 48.04) +
-  // details::deg_to_rad(129602768.13 / 3600.)*time + details::deg_to_rad(1.089
+floating_t detail::mean_longitude_sun(floating_t time) noexcept { // hs_rad
+  // const auto hs_rad = detail::dms_to_rad(279., 41., 48.04) +
+  // detail::deg_to_rad(129602768.13 / 3600.)*time + detail::deg_to_rad(1.089
   // / 3600.)*std::pow(time, 2.);
 
-  const auto hs_rad = details::dms_to_rad(279., 41., 48.05)
-					  + details::deg_to_rad(129602768.11 / 3600.) * time
-					  + details::deg_to_rad(1.080 / 3600.) * std::pow(time, 2.);
+  const auto hs_rad = detail::dms_to_rad(279., 41., 48.05)
+					  + detail::deg_to_rad(129602768.11 / 3600.) * time
+					  + detail::deg_to_rad(1.080 / 3600.) * std::pow(time, 2.);
 
   return hs_rad;
 }
 
-floating_t details::longitude_of_moons_ascending_node(
-  floating_t time) noexcept { // N_rad
-  // const auto N_rad = details::dms_to_rad(259., 10., 57.12) -
-  // details::deg_to_rad((5. * rev_sec + 482912.63) / 3600.)*time +
-  // details::deg_to_rad(7.58 / 3600.)*std::pow(time, 2.) +
-  // details::deg_to_rad(0.008 / 3600.)*std::pow(time, 3.);
+floating_t
+  detail::longitude_of_moons_ascending_node(floating_t time) noexcept { // N_rad
+  // const auto N_rad = detail::dms_to_rad(259., 10., 57.12) -
+  // detail::deg_to_rad((5. * rev_sec + 482912.63) / 3600.)*time +
+  // detail::deg_to_rad(7.58 / 3600.)*std::pow(time, 2.) +
+  // detail::deg_to_rad(0.008 / 3600.)*std::pow(time, 3.);
 
   const auto N_rad =
-	details::dms_to_rad(259., 10., 59.81)
-	- details::deg_to_rad((5. * constant::rev_sec + 482911.24) / 3600.) * time
-	+ details::deg_to_rad(7.48 / 3600.) * std::pow(time, 2.)
-	+ details::deg_to_rad(0.007 / 3600.) * std::pow(time, 3.);
+	detail::dms_to_rad(259., 10., 59.81)
+	- detail::deg_to_rad((5. * constant::rev_sec + 482911.24) / 3600.) * time
+	+ detail::deg_to_rad(7.48 / 3600.) * std::pow(time, 2.)
+	+ detail::deg_to_rad(0.007 / 3600.) * std::pow(time, 3.);
   return N_rad;
 }
 
 floating_t
-  details::mean_longitude_solar_perigee(floating_t time) noexcept { // ps_rad
-  // const auto ps_rad = details::dms_to_rad(281., 13., 15.00) +
-  // details::deg_to_rad(6189.03 / 3600.)*time + details::deg_to_rad(1.63 /
-  // 3600.)*std::pow(time, 2.) + details::deg_to_rad(0.012 / 3600.)*
+  detail::mean_longitude_solar_perigee(floating_t time) noexcept { // ps_rad
+  // const auto ps_rad = detail::dms_to_rad(281., 13., 15.00) +
+  // detail::deg_to_rad(6189.03 / 3600.)*time + detail::deg_to_rad(1.63 /
+  // 3600.)*std::pow(time, 2.) + detail::deg_to_rad(0.012 / 3600.)*
   // std::pow(time, 3.);
 
-  const auto ps_rad = details::dms_to_rad(281., 13., 14.99)
-					  + details::deg_to_rad(6188.47 / 3600.) * time
-					  + details::deg_to_rad(1.62 / 3600.) * std::pow(time, 2.)
-					  + details::deg_to_rad(0.011 / 3600.) * std::pow(time, 3.);
+  const auto ps_rad = detail::dms_to_rad(281., 13., 14.99)
+					  + detail::deg_to_rad(6188.47 / 3600.) * time
+					  + detail::deg_to_rad(1.62 / 3600.) * std::pow(time, 2.)
+					  + detail::deg_to_rad(0.011 / 3600.) * std::pow(time, 3.);
 
   return ps_rad;
 }
 
 floating_t
-  details::eccentricity_of_earths_orbit(floating_t time) noexcept { // es
+  detail::eccentricity_of_earths_orbit(floating_t time) noexcept { // es
   return 0.01675104 - 0.00004180 * time - 0.000000126 * std::pow(time, 2.);
 }
 
 void longman_impl::calc_longitude_and_eccentricity(floating_t time) noexcept {
-  sm_rad = details::mean_longitude_moon(time);
-  pm_rad = details::mean_longitude_lunar_perigee(time);
-  hs_rad = details::mean_longitude_sun(time);
-  N_rad = details::longitude_of_moons_ascending_node(time);
-  ps_rad = details::mean_longitude_solar_perigee(time);
-  es = details::eccentricity_of_earths_orbit(time);
+  sm_rad = detail::mean_longitude_moon(time);
+  pm_rad = detail::mean_longitude_lunar_perigee(time);
+  hs_rad = detail::mean_longitude_sun(time);
+  N_rad = detail::longitude_of_moons_ascending_node(time);
+  ps_rad = detail::mean_longitude_solar_perigee(time);
+  es = detail::eccentricity_of_earths_orbit(time);
 }
 
 auto longman_impl::calculate_acceleration(const time_point& utc_time) const
   -> floating_t /* meters_per_second_squared_t*/
 {
   using fhours_t = std::chrono::duration<floating_t, std::ratio<3600>>;
-  const auto t0 = details::from_midnight<fhours_t>(utc_time).count();
-  const auto t_rad = details::deg_to_rad(
-	15. * (t0 - 12.) + details::rad_to_deg(pos_rad_cm.longitude));
+  const auto t0 = detail::from_midnight<fhours_t>(utc_time).count();
+  const auto t_rad = detail::deg_to_rad(
+	15. * (t0 - 12.) + detail::rad_to_deg(pos_rad_cm.longitude));
 
   // Longitude in the celestial equator of its intersection A with the Moon's
   // orbit

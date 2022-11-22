@@ -3,6 +3,7 @@
 #include <numbers>
 #include <concepts>
 #include <chrono>
+#include <stdexcept>
 
 namespace iporoskun::longman {
 

@@ -8,8 +8,6 @@ namespace iporoskun::longman {
 
 namespace detail {
 
-using namespace std::numbers;
-
 template<std::floating_point T>
 inline constexpr auto abs(T const& x) noexcept {
   return x < 0 ? -x : x;
@@ -20,18 +18,20 @@ inline constexpr floating_t dms_to_rad(
   const floating_t angles_deg =
 	detail::abs(deg) + detail::abs(min) / 60. + detail::abs(sec) / 3600.;
   if (deg < 0. || min < 0. || sec < 0.) {
-	return -angles_deg * pi_v<floating_t> / static_cast<floating_t>(180);
+	return -angles_deg
+		   * std::numbers::pi_v<floating_t> / static_cast<floating_t>(180);
   } else {
-	return angles_deg * pi_v<floating_t> / static_cast<floating_t>(180);
+	return angles_deg
+		   * std::numbers::pi_v<floating_t> / static_cast<floating_t>(180);
   }
 }
 
 inline constexpr floating_t deg_to_rad(floating_t deg) noexcept {
-  return deg * pi_v<floating_t> / static_cast<floating_t>(180);
+  return deg * std::numbers::pi_v<floating_t> / static_cast<floating_t>(180);
 }
 
 inline constexpr floating_t rad_to_deg(floating_t rad) noexcept {
-  return rad / pi_v<floating_t> * static_cast<floating_t>(180);
+  return rad / std::numbers::pi_v<floating_t> * static_cast<floating_t>(180);
 }
 
 inline auto

@@ -6,11 +6,6 @@
 
 namespace iporoskun::longman {
 
-struct result_type {
-  floating_t delta_g_mgal;
-  floating_t delta_g_ms2;
-};
-
 namespace details {
 
 using namespace std::numbers;
@@ -101,9 +96,8 @@ class longman_impl {
   using time_point = std::chrono::system_clock::time_point;
 
 public:
-  explicit longman_impl(const position& measurement_position) {
-	pos_rad_cm =
-	  details::position_from_deg_meter_to_rad_cm(measurement_position);
+  explicit longman_impl(const position& position) {
+	pos_rad_cm = details::position_from_deg_meter_to_rad_cm(position);
   }
 
   [[nodiscard]] auto operator()(const time_point& utc_time) noexcept
@@ -152,6 +146,12 @@ inline auto longman_impl::operator()(const time_point& utc_time) noexcept
   Im_rad = inclination_of_moon();
 
   return calculate_acceleration(utc_time);
+}
+
+[[nodiscard]] inline auto longman(
+  const position& position,
+  const std::chrono::system_clock::time_point& utc_time) -> floating_t {
+  return longman_impl(position)(utc_time);
 }
 
 } // namespace iporoskun::longman

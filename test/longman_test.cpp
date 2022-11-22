@@ -142,7 +142,7 @@ TEST_CASE("comparision with matlab results") {
 	  == Approx(0.016704558175993).epsilon(EPS));
   }
 
-  const auto discard = longman(time);
+  [[maybe_unused]] const auto discard = longman(time);
 
   SECTION("distances in cm") {
 	const auto rad_cm_param =
@@ -172,5 +172,10 @@ TEST_CASE("comparision with matlab results") {
 
   SECTION("acceleration") {
 	CHECK(longman(time) == Approx(-0.00000035704380751590).epsilon(1e-10));
+  }
+
+  SECTION("acceleration from a single function") {
+	const auto accel = ::iporoskun::longman::longman(position, time);
+	CHECK(accel == Approx(-0.00000035704380751590).epsilon(1e-10));
   }
 }

@@ -201,7 +201,18 @@ TEMPLATE_LIST_TEST_CASE(
 								   longman::longitude_t<floating_t>(-90.50),
 								   longman::height_t<floating_t>(0) };
 
-  const auto accel =
-	::iporoskun::longman::longman<floating_t, TestType>(position, time);
-  CHECK(accel == Approx(-0.00000035704380751590).epsilon(1e-10));
+  const auto MATLAB_RESULT = Approx(-0.00000035704380751590).epsilon(1e-10);
+
+  SECTION("using system_clock") {
+	const auto accel =
+	  ::iporoskun::longman::longman<floating_t, TestType>(position, time);
+	CHECK(accel == MATLAB_RESULT);
+  }
+
+  SECTION("using utc_clock") {
+	const auto now = std::chrono::clock_cast<std::chrono::utc_clock>(time);
+	[[maybe_unused]] const auto accel =
+	  ::iporoskun::longman::longman<floating_t, TestType>(position, now);
+	// CHECK(accel == MATLAB_RESULT);
+  }
 }

@@ -95,9 +95,8 @@ inline auto from_midnight(TimePointType tp) noexcept {
   return std::chrono::floor<Duration>(time.to_duration());
 }
 
-template<std::floating_point floating_t, class TimePointType>
-inline floating_t
-  julian_centuries_from_reference_date(TimePointType tp) noexcept {
+template<std::floating_point floating_t, class TimePoint>
+inline floating_t julian_centuries_from_reference_date(TimePoint tp) noexcept {
 
   using namespace std::chrono;
 
@@ -106,7 +105,9 @@ inline floating_t
   };
 
   const auto dp = floor<days>(tp);
-  const auto diff_days = sys_days{ dp } - reference_date;
+  const auto diff_days =
+	time_point<typename TimePoint::clock, days>{ dp }
+	- clock_cast<typename TimePoint::clock>(reference_date);
   const auto time_diff = from_midnight<std::chrono::seconds>(tp);
   const auto total_diff = floor<std::chrono::seconds>(diff_days) + time_diff;
 
@@ -137,9 +138,10 @@ inline auto position_from_deg_meter_to_rad_cm(position<FloatingType> const& pos)
 
 template<
   std::floating_point FloatingType = double,
-  class DurationType = std::chrono::seconds>
+  class DurationType = std::chrono::seconds,
+  class TimePoint = std::chrono::system_clock::time_point>
 class longman_impl {
-  using time_point_t = std::chrono::system_clock::time_point;
+  using time_point_t = TimePoint;
   using position_t = position<FloatingType>;
   using floating_t = FloatingType;
 
@@ -179,14 +181,15 @@ private:
   floating_t Im_rad; // Inclination of the Moon's orbit to the equator
 };
 
-template<std::floating_point FloatingType, class Duration>
-inline auto longman_impl<FloatingType, Duration>::operator()(
+template<std::floating_point FloatingType, class Duration, class TimePoint>
+inline auto longman_impl<FloatingType, Duration, TimePoint>::operator()(
   const time_point_t& utc_time) noexcept
   -> floating_t /*meters_per_second_squared_t*/
 {
   using namespace std::chrono;
-  const auto time = julian_centuries_from_reference_date<FloatingType>(
-	floor<Duration>(utc_time));
+  const auto time =
+	julian_centuries_from_reference_date<FloatingType, TimePoint>(
+	  floor<typename TimePoint::duration>(utc_time));
 
   calc_longitude_and_eccentricity(time);
   r = distance_to_earth_centre(pos_rad_cm);
@@ -310,8 +313,8 @@ auto eccentricity_of_earths_orbit(
   return 0.01675104 - 0.00004180 * time - 0.000000126 * std::pow(time, 2.);
 }
 
-template<std::floating_point F, class D>
-void longman_impl<F, D>::calc_longitude_and_eccentricity(
+template<std::floating_point F, class D, class T>
+void longman_impl<F, D, T>::calc_longitude_and_eccentricity(
   floating_t time) noexcept {
   sm_rad = detail::mean_longitude_moon<F>(time);
   pm_rad = detail::mean_longitude_lunar_perigee<F>(time);
@@ -321,16 +324,15 @@ void longman_impl<F, D>::calc_longitude_and_eccentricity(
   es = detail::eccentricity_of_earths_orbit<F>(time);
 }
 
-template<std::floating_point FloatingType, class D>
-auto longman_impl<FloatingType, D>::calculate_acceleration(
-  const time_point_t& utc_time) const
-  -> FloatingType /* meters_per_second_squared_t*/
+template<std::floating_point F, class D, class T>
+auto longman_impl<F, D, T>::calculate_acceleration(
+  const time_point_t& utc_time) const -> F /* meters_per_second_squared_t*/
 {
-  using constant = constant<FloatingType>;
-  using fhours_t = std::chrono::duration<floating_t, std::ratio<3600>>;
+  using constant = constant<F>;
+  using fhours_t = std::chrono::duration<F, std::ratio<3600>>;
   const auto t0 = detail::from_midnight<fhours_t>(utc_time).count();
-  const auto t_rad = detail::deg_to_rad<FloatingType>(
-	15. * (t0 - 12.) + detail::rad_to_deg<FloatingType>(pos_rad_cm.longitude));
+  const auto t_rad = detail::deg_to_rad<F>(
+	15. * (t0 - 12.) + detail::rad_to_deg<F>(pos_rad_cm.longitude));
 
   // Longitude in the celestial equator of its intersection A with the Moon's
   // orbit
@@ -385,18 +387,18 @@ auto longman_impl<FloatingType, D>::calculate_acceleration(
   return /*meters_per_second_squared_t*/ floating_t{ g0_gal / 100. };
 }
 
-template<std::floating_point F, class D>
-auto longman_impl<F, D>::distance_to_earth_centre(
-  const position_t& pos_rad_cm) noexcept -> floating_t { // r
+template<std::floating_point F, class D, class T>
+auto longman_impl<F, D, T>::distance_to_earth_centre(
+  const position_t& pos_rad_cm) noexcept -> floating_t {
   const auto C_2 =
 	1. / (1. + constant<F>::e_crt_2 * pow(sin(pos_rad_cm.latitude.get()), 2.));
   const auto C = sqrt(C_2);
   return C * constant<F>::a + pos_rad_cm.height.get();
 }
 
-template<std::floating_point F, class D>
-auto longman_impl<F, D>::distance_center_moon_earth() const noexcept
-  -> floating_t { // d
+template<std::floating_point F, class D, class T>
+auto longman_impl<F, D, T>::distance_center_moon_earth() const noexcept
+  -> floating_t {
   using constant = constant<F>;
   const auto a_moon = 1. / (constant::c_m * (1. - pow(constant::e_m, 2.)));
   const auto recip_d =
@@ -408,9 +410,9 @@ auto longman_impl<F, D>::distance_center_moon_earth() const noexcept
   return 1. / recip_d;
 }
 
-template<std::floating_point F, class D>
-auto longman_impl<F, D>::distance_center_sun_earth() const noexcept
-  -> floating_t { // D
+template<std::floating_point F, class D, class T>
+auto longman_impl<F, D, T>::distance_center_sun_earth() const noexcept
+  -> floating_t {
   using constant = constant<F>;
   const auto a_sun = 1. / (constant::c_s * (1. - pow(es, 2.)));
   const auto recip_D =
@@ -418,8 +420,8 @@ auto longman_impl<F, D>::distance_center_sun_earth() const noexcept
   return static_cast<floating_t>(1) / recip_D;
 }
 
-template<std::floating_point F, class D>
-auto longman_impl<F, D>::inclination_of_moon() const -> floating_t { // Im_rad
+template<std::floating_point F, class D, class T>
+auto longman_impl<F, D, T>::inclination_of_moon() const -> floating_t {
   using constant = constant<F>;
   const auto inc_moon_rad = acos(
 	cos(constant::omega) * cos(constant::i)
@@ -435,9 +437,8 @@ auto longman_impl<F, D>::inclination_of_moon() const -> floating_t { // Im_rad
   return inc_moon_rad;
 }
 
-template<std::floating_point F, class D>
-auto longman_impl<F, D>::longitude_celestial_equator() const
-  -> floating_t { // nu
+template<std::floating_point F, class D, class T>
+auto longman_impl<F, D, T>::longitude_celestial_equator() const -> floating_t {
   const auto nu_t = asin(sin(constant<F>::i) * sin(N_rad) / sin(Im_rad));
 #if not defined(IPOROSKUN_LONGMAN_DISABLE_RUNTIME_CHECKS)
   if (
@@ -461,7 +462,8 @@ template<
 [[nodiscard]] inline auto
   longman(const position<FloatingType>& position, const TimePoint& utc_time)
 	-> FloatingType {
-  return detail::longman_impl<FloatingType, DurationType>(position)(utc_time);
+  return detail::longman_impl<FloatingType, DurationType, TimePoint>(position)(
+	utc_time);
 }
 
 } // namespace iporoskun::longman

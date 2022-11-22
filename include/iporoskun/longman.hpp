@@ -68,7 +68,6 @@ inline floating_t julian_centuries_from_reference_date(
 		 / number_of_seconds_in_julian_century;
 }
 
-} // namespace detail
 
 inline constexpr floating_t degree_minute_second_to_degree(
   floating_t deg, floating_t min, floating_t sec) noexcept {
@@ -76,7 +75,7 @@ inline constexpr floating_t degree_minute_second_to_degree(
 		 / std::numbers::pi_v<floating_t>;
 }
 
-namespace detail {
+
 floating_t mean_longitude_moon(floating_t time) noexcept;
 floating_t mean_longitude_lunar_perigee(floating_t time) noexcept;
 floating_t mean_longitude_sun(floating_t time) noexcept;
@@ -89,7 +88,6 @@ inline position position_from_deg_meter_to_rad_cm(position const& pos) {
 				   longitude{ detail::deg_to_rad(pos.longitude) },
 				   height{ pos.height * 100. } };
 }
-} // namespace detail
 
 
 class longman_impl {
@@ -148,10 +146,12 @@ inline auto longman_impl::operator()(const time_point& utc_time) noexcept
   return calculate_acceleration(utc_time);
 }
 
+} // namespace detail
+
 [[nodiscard]] inline auto longman(
   const position& position,
   const std::chrono::system_clock::time_point& utc_time) -> floating_t {
-  return longman_impl(position)(utc_time);
+  return detail::longman_impl(position)(utc_time);
 }
 
 } // namespace iporoskun::longman

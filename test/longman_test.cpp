@@ -30,7 +30,7 @@ TEST_CASE("angle transformations") {
 
   SECTION("megree-min-sec to deg") {
 	CHECK(
-	  longman::degree_minute_second_to_degree(22, 44, 0)
+	  longman::detail::degree_minute_second_to_degree(22, 44, 0)
 	  == Approx(22.7333333333));
   }
 }
@@ -78,13 +78,13 @@ TEST_CASE("time from midnight") {
 TEST_CASE("creating longman object") {
 
   SECTION("position and utc offset-time") {
-	longman::longman_impl longman(pos);
+	longman::detail::longman_impl longman(pos);
   }
 }
 
 TEST_CASE("using longman's operator()") {
 
-  longman::longman_impl longman(pos);
+  longman::detail::longman_impl longman(pos);
 
   SECTION("") {
 	auto now = std::chrono::system_clock::now();
@@ -101,7 +101,7 @@ TEST_CASE("comparision with matlab results") {
   const auto position =
 	longman::position{ longman::latitude(-22.733), longman::longitude(-90.50),
 					   longman::height(0) };
-  longman::longman_impl longman(position);
+  longman::detail::longman_impl longman(position);
 
   const auto EPS = 1e-14;
 

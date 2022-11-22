@@ -1,7 +1,8 @@
 #include <exception>
 #include "iporoskun/longman.hpp"
 
-namespace iporoskun::longman {
+namespace iporoskun::longman::detail {
+
 
 namespace constant {
 // Advances in Geophysical Methods Applied to Forensic Investigations
@@ -231,4 +232,4 @@ floating_t longman_impl::longitude_celestial_equator() const { // nu
   return nu_t;
 }
 
-} // namespace iporoskun::longman
+} // namespace iporoskun::longman::detail

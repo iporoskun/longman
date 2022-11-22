@@ -25,12 +25,12 @@ TEST_CASE("angle transformations") {
   }
 
   SECTION("degree to rad") {
-	CHECK(longman::detail::deg_to_rad(45) == Approx(0.785398163397));
+	CHECK(longman::detail::deg_to_rad(45.) == Approx(0.785398163397));
   }
 
   SECTION("megree-min-sec to deg") {
 	CHECK(
-	  longman::detail::degree_minute_second_to_degree(22, 44, 0)
+	  longman::detail::degree_minute_second_to_degree(22., 44., 0.)
 	  == Approx(22.7333333333));
   }
 }
@@ -41,26 +41,28 @@ TEST_CASE("amount of centureis from ref-date") {
 
   SECTION("dates are same ") {
 	CHECK(
-	  julian_centuries_from_reference_date(sys_days{ 1899y / 12 / 31d } + 12h)
+	  julian_centuries_from_reference_date<double>(
+		sys_days{ 1899y / 12 / 31d } + 12h)
 	  == 0.);
   }
 
   SECTION("1 century") {
 	// https://www.wolframalpha.com/input/?i=31+december+1899+%2B+%28100+*+365.25+days%29+
 	CHECK(
-	  julian_centuries_from_reference_date(sys_days{ 2000y / 1 / 1d } + 12h)
+	  julian_centuries_from_reference_date<double>(
+		sys_days{ 2000y / 1 / 1d } + 12h)
 	  == 1.);
   }
 
   SECTION("matlab result 1") {
 	CHECK(
-	  julian_centuries_from_reference_date(sys_days{ 2010y / 10 / 31d })
+	  julian_centuries_from_reference_date<double>(sys_days{ 2010y / 10 / 31d })
 	  == Approx(1.108302722640506));
   }
 
   SECTION("matlab result 2") {
 	CHECK(
-	  julian_centuries_from_reference_date(sys_days{ 2020y / 12 / 7d })
+	  julian_centuries_from_reference_date<double>(sys_days{ 2020y / 12 / 7d })
 	  == Approx(1.209329416685681));
   }
 }
@@ -97,7 +99,8 @@ TEST_CASE("comparision with matlab results") {
   // Longman(-22.733,-90.50,0,31,12,1899,0,10,6,0,31,10,2010);
   const auto day = sys_days{ (year_month_day{ 2010y / 10 / 31d }) };
   const auto time = day + 6h + 10min + 0s;
-  const double T = longman::detail::julian_centuries_from_reference_date(time);
+  const double T =
+	longman::detail::julian_centuries_from_reference_date<double>(time);
   const auto position =
 	longman::position{ longman::latitude<>(-22.733),
 					   longman::longitude<>(-90.50), longman::height<>(0) };
@@ -178,4 +181,21 @@ TEST_CASE("comparision with matlab results") {
 	const auto accel = ::iporoskun::longman::longman(position, time);
 	CHECK(accel == Approx(-0.00000035704380751590).epsilon(1e-10));
   }
+}
+
+using duration_types = std::tuple<
+  std::chrono::nanoseconds, std::chrono::microseconds,
+  std::chrono::milliseconds, std::chrono::seconds, std::chrono::minutes,
+  std::chrono::hours>;
+TEMPLATE_LIST_TEST_CASE(
+  "using different duration types", "[]", duration_types) {
+  const auto day = sys_days{ (year_month_day{ 2010y / 10 / 31d }) };
+  const auto time = day + 6h + 10min + 0s;
+  const auto position =
+	longman::position{ longman::latitude<>(-22.733),
+					   longman::longitude<>(-90.50), longman::height<>(0) };
+
+  const auto accel =
+	::iporoskun::longman::longman<double, TestType>(position, time);
+  CHECK(accel == Approx(-0.00000035704380751590).epsilon(1e-10));
 }

@@ -97,11 +97,11 @@ inline position position_from_deg_meter_to_rad_cm(position const& pos) {
 } // namespace details
 
 
-class longman {
+class longman_impl {
   using time_point = std::chrono::system_clock::time_point;
 
 public:
-  explicit longman(const position& measurement_position) {
+  explicit longman_impl(const position& measurement_position) {
 	pos_rad_cm =
 	  details::position_from_deg_meter_to_rad_cm(measurement_position);
   }
@@ -138,7 +138,7 @@ private:
   floating_t Im_rad; // Inclination of the Moon's orbit to the equator
 };
 
-inline auto longman::operator()(const time_point& utc_time) noexcept
+inline auto longman_impl::operator()(const time_point& utc_time) noexcept
   -> floating_t /*meters_per_second_squared_t*/
 {
   using namespace std::chrono;

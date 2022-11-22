@@ -106,7 +106,7 @@ floating_t
   return 0.01675104 - 0.00004180 * time - 0.000000126 * std::pow(time, 2.);
 }
 
-void longman::calc_longitude_and_eccentricity(floating_t time) noexcept {
+void longman_impl::calc_longitude_and_eccentricity(floating_t time) noexcept {
   sm_rad = details::mean_longitude_moon(time);
   pm_rad = details::mean_longitude_lunar_perigee(time);
   hs_rad = details::mean_longitude_sun(time);
@@ -115,7 +115,7 @@ void longman::calc_longitude_and_eccentricity(floating_t time) noexcept {
   es = details::eccentricity_of_earths_orbit(time);
 }
 
-auto longman::calculate_acceleration(const time_point& utc_time) const
+auto longman_impl::calculate_acceleration(const time_point& utc_time) const
   -> floating_t /* meters_per_second_squared_t*/
 {
   using fhours_t = std::chrono::duration<floating_t, std::ratio<3600>>;
@@ -177,15 +177,15 @@ auto longman::calculate_acceleration(const time_point& utc_time) const
 }
 
 
-floating_t
-  longman::distance_to_earth_centre(const position& pos_rad_cm) noexcept { // r
+floating_t longman_impl::distance_to_earth_centre(
+  const position& pos_rad_cm) noexcept { // r
   const auto C_2 =
 	1. / (1. + constant::e_crt_2 * pow(sin(pos_rad_cm.latitude.get()), 2.));
   const auto C = sqrt(C_2);
   return C * constant::a + pos_rad_cm.height.get();
 }
 
-floating_t longman::distance_center_moon_earth() const noexcept { // d
+floating_t longman_impl::distance_center_moon_earth() const noexcept { // d
   using namespace constant;
   const auto a_moon = 1. / (c_m * (1. - pow(e_m, 2.)));
   const auto recip_d =
@@ -196,14 +196,14 @@ floating_t longman::distance_center_moon_earth() const noexcept { // d
   return 1. / recip_d;
 }
 
-floating_t longman::distance_center_sun_earth() const noexcept { // D
+floating_t longman_impl::distance_center_sun_earth() const noexcept { // D
   using namespace constant;
   const auto a_sun = 1. / (c_s * (1. - pow(es, 2.)));
   const auto recip_D = ((1. / c_s) + a_sun * es * cos(hs_rad - ps_rad));
   return static_cast<floating_t>(1) / recip_D;
 }
 
-floating_t longman::inclination_of_moon() const { // Im_rad
+floating_t longman_impl::inclination_of_moon() const { // Im_rad
   using namespace constant;
   const auto inc_moon_rad =
 	acos(cos(omega) * cos(i) - sin(omega) * sin(i) * cos(N_rad));
@@ -218,7 +218,7 @@ floating_t longman::inclination_of_moon() const { // Im_rad
   return inc_moon_rad;
 }
 
-floating_t longman::longitude_celestial_equator() const { // nu
+floating_t longman_impl::longitude_celestial_equator() const { // nu
   const auto nu_t = asin(sin(constant::i) * sin(N_rad) / sin(Im_rad));
 #if not defined(IPOROSKUN_LONGMAN_DISABLE_RUNTIME_CHECKS)
   if (

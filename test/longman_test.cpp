@@ -8,9 +8,12 @@ using namespace std::chrono_literals;
 
 namespace longman = iporoskun::longman;
 
-auto pos = longman::position{ longman::latitude_t<>(52.29610),
-							  longman::longitude_t<>(10.45900),
-							  longman::height_t<>(80) };
+auto get_pos() {
+  auto pos = longman::position{ longman::latitude_t<>(52.29610),
+								longman::longitude_t<>(10.45900),
+								longman::height_t<>(80) };
+  return pos;
+}
 
 
 TEST_CASE("angle transformations") {
@@ -80,13 +83,13 @@ TEST_CASE("time from midnight") {
 TEST_CASE("creating longman object") {
 
   SECTION("position and utc offset-time") {
-	longman::detail::longman_impl<> longman(pos);
+	longman::detail::longman_impl<> longman(get_pos());
   }
 }
 
 TEST_CASE("using longman's operator()") {
 
-  longman::detail::longman_impl<> longman(pos);
+  longman::detail::longman_impl<> longman(get_pos());
 
   SECTION("") {
 	auto now = std::chrono::system_clock::now();

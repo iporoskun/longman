@@ -203,5 +203,5 @@ TEMPLATE_LIST_TEST_CASE(
 
   const auto accel =
 	::iporoskun::longman::longman<floating_t, TestType>(position, time);
-  CHECK(accel == Approx(-0.00000035704380751590).epsilon(1e-6));
+  CHECK(accel == Approx(-0.00000035704380751590).epsilon(1e-10));
 }

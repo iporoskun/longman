@@ -2,6 +2,7 @@
 #include <cmath>
 #include <numbers>
 #include <concepts>
+#include <chrono>
 
 namespace iporoskun::longman {
 
@@ -121,14 +122,6 @@ inline constexpr floating_t degree_minute_second_to_degree(
   return detail::dms_to_rad(deg, min, sec) * 180.
 		 / std::numbers::pi_v<floating_t>;
 }
-
-
-auto mean_longitude_moon(std::floating_point auto time) noexcept;
-auto mean_longitude_lunar_perigee(std::floating_point auto time) noexcept;
-auto mean_longitude_sun(std::floating_point auto time) noexcept;
-auto longitude_of_moons_ascending_node(std::floating_point auto time) noexcept;
-auto mean_longitude_solar_perigee(std::floating_point auto time) noexcept;
-auto eccentricity_of_earths_orbit(std::floating_point auto time) noexcept;
 
 template<std::floating_point FloatingType>
 inline auto position_from_deg_meter_to_rad_cm(position<FloatingType> const& pos)

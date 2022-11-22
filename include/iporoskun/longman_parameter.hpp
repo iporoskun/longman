@@ -1,5 +1,6 @@
 #pragma once
 #include <chrono>
+#include <concepts>
 #include "named_type.hpp"
 
 #ifndef IPOROSKUN_LONGMAN_UNDERLYING_FLOATING_TYPE
@@ -10,23 +11,28 @@
 
 namespace iporoskun::longman {
 
-using floating_t = IPOROSKUN_LONGMAN_UNDERLYING_FLOATING_TYPE;
-using duration_t = std::chrono::seconds;
-
 namespace detail {
+using floating_t = IPOROSKUN_LONGMAN_UNDERLYING_FLOATING_TYPE;
+
 struct latitude_tag;
 struct longitude_tag;
 struct height_tag;
 } // namespace detail
 
-using latitude = detail::named_type<floating_t, detail::latitude_tag>;
-using longitude = detail::named_type<floating_t, detail::longitude_tag>;
-using height = detail::named_type<floating_t, detail::height_tag>;
+template<std::floating_point FloatingType = detail::floating_t>
+using latitude = detail::named_type<FloatingType, detail::latitude_tag>;
 
+template<std::floating_point FloatingType = detail::floating_t>
+using longitude = detail::named_type<FloatingType, detail::longitude_tag>;
+
+template<std::floating_point FloatingType = detail::floating_t>
+using height = detail::named_type<FloatingType, detail::height_tag>;
+
+template<std::floating_point FloatingType = detail::floating_t>
 struct position {
-  latitude latitude; /* deg */
-  longitude longitude; /* deg */
-  height height; /* msl_orthometric_height, meter and also cm*/
+  latitude<FloatingType> latitude; /* deg */
+  longitude<FloatingType> longitude; /* deg */
+  height<FloatingType> height; /* msl_orthometric_height, meter and also cm*/
 };
 
 } // namespace iporoskun::longman

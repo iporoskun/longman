@@ -154,6 +154,10 @@ if(ENABLE_TESTING)
   add_subdirectory(test)
 endif()
 
+# Adding benchmark
+find_package(benchmark)
+add_subdirectory(benchmark)
+
 # If MSVC is being used, and ASAN is enabled, we need to set the debugger environment
 # so that it behaves well with MSVC's debugger, and we can run the target from visual studio
 if(MSVC)

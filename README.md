@@ -13,6 +13,22 @@ The time point for the calculation must be given as UTC (+0h). To compute the ac
 const auto now = std::chrono::utc_clock::now();
 const auto acceleration = longman(my_position, now);
 ```
+## Benchmark 
+
+Benchmark results from running in release mode:
+```
+Run on (8 X 1500.44 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x4)
+  L1 Instruction 32 KiB (x4)
+  L2 Unified 512 KiB (x4)
+  L3 Unified 6144 KiB (x1)
+--------------------------------------------------------
+Benchmark              Time             CPU   Iterations
+--------------------------------------------------------
+longman_bench       1122 ns         1116 ns       560000
+```
+
 
 ## Useful references
 

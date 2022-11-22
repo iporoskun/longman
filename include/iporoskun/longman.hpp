@@ -29,12 +29,12 @@ inline constexpr floating_t dms_to_rad(
 }
 
 template<std::floating_point floating_t>
-inline constexpr auto deg_to_rad(floating_t deg) noexcept {
+inline constexpr auto deg_to_rad(floating_t deg) noexcept -> floating_t {
   return deg * std::numbers::pi_v<floating_t> / static_cast<floating_t>(180);
 }
 
 template<std::floating_point floating_t>
-inline constexpr auto rad_to_deg(floating_t rad) noexcept {
+inline constexpr auto rad_to_deg(floating_t rad) noexcept -> floating_t {
   return rad / std::numbers::pi_v<floating_t> * static_cast<floating_t>(180);
 }
 
@@ -87,12 +87,14 @@ auto longitude_of_moons_ascending_node(std::floating_point auto time) noexcept;
 auto mean_longitude_solar_perigee(std::floating_point auto time) noexcept;
 auto eccentricity_of_earths_orbit(std::floating_point auto time) noexcept;
 
-template<std::floating_point FloatingType = double>
+template<std::floating_point FloatingType>
 inline auto position_from_deg_meter_to_rad_cm(position<FloatingType> const& pos)
   -> position<FloatingType> {
-  return position{ latitude{ detail::deg_to_rad<FloatingType>(pos.latitude) },
-				   longitude{ detail::deg_to_rad<FloatingType>(pos.longitude) },
-				   height{ pos.height * 100. } };
+  return position<FloatingType>{
+	latitude<FloatingType>{ detail::deg_to_rad<FloatingType>(pos.latitude) },
+	longitude<FloatingType>{ detail::deg_to_rad<FloatingType>(pos.longitude) },
+	height<FloatingType>{ pos.height * 100. }
+  };
 }
 
 template<
@@ -105,7 +107,7 @@ class longman_impl {
 
 public:
   explicit longman_impl(const position_t& position) {
-	pos_rad_cm = detail::position_from_deg_meter_to_rad_cm(position);
+	pos_rad_cm = position_from_deg_meter_to_rad_cm<floating_t>(position);
   }
 
   [[nodiscard]] auto operator()(const time_point_t& utc_time) noexcept

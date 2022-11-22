@@ -187,15 +187,21 @@ using duration_types = std::tuple<
   std::chrono::nanoseconds, std::chrono::microseconds,
   std::chrono::milliseconds, std::chrono::seconds, std::chrono::minutes,
   std::chrono::hours>;
+using floating_types = std::tuple<float, double, long double>;
 TEMPLATE_LIST_TEST_CASE(
-  "using different duration types", "[]", duration_types) {
+  "using different duration types", "[]",
+  /*((typename Duration, typename Floating), Duration, Floating),*/
+  duration_types) {
   const auto day = sys_days{ (year_month_day{ 2010y / 10 / 31d }) };
   const auto time = day + 6h + 10min + 0s;
+
+  using floating_t = long double;
   const auto position =
-	longman::position{ longman::latitude<>(-22.733),
-					   longman::longitude<>(-90.50), longman::height<>(0) };
+	longman::position<floating_t>{ longman::latitude<floating_t>(-22.733),
+								   longman::longitude<floating_t>(-90.50),
+								   longman::height<floating_t>(0) };
 
   const auto accel =
-	::iporoskun::longman::longman<double, TestType>(position, time);
+	::iporoskun::longman::longman<floating_t, TestType>(position, time);
   CHECK(accel == Approx(-0.00000035704380751590).epsilon(1e-10));
 }
